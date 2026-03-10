@@ -1,0 +1,26 @@
+{
+  "id": "saintjulien",
+  "name": "Golf Barrière de Saint-Julien",
+  "par": 73,
+  "location": "Saint-Julien-sur-Calonne, Normandy",
+  "holes": [
+    { "num": 1, "par": 4, "si": 4 },
+    { "num": 2, "par": 4, "si": 14 },
+    { "num": 3, "par": 5, "si": 12 },
+    { "num": 4, "par": 3, "si": 16 },
+    { "num": 5, "par": 4, "si": 10 },
+    { "num": 6, "par": 3, "si": 6 },
+    { "num": 7, "par": 4, "si": 18 },
+    { "num": 8, "par": 4, "si": 2 },
+    { "num": 9, "par": 4, "si": 8 },
+    { "num": 10, "par": 5, "si": 1 },
+    { "num": 11, "par": 4, "si": 5 },
+    { "num": 12, "par": 4, "si": 9 },
+    { "num": 13, "par": 3, "si": 7 },
+    { "num": 14, "par": 5, "si": 3 },
+    { "num": 15, "par": 3, "si": 13 },
+    { "num": 16, "par": 4, "si": 15 },
+    { "num": 17, "par": 4, "si": 17 },
+    { "num": 18, "par": 5, "si": 11 }
+  ]
+}

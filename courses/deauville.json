@@ -1,0 +1,26 @@
+{
+  "id": "deauville",
+  "name": "Golf Barrière de Deauville",
+  "par": 72,
+  "location": "Deauville, Normandy",
+  "holes": [
+    { "num": 1, "par": 4, "si": 6 },
+    { "num": 2, "par": 5, "si": 14 },
+    { "num": 3, "par": 3, "si": 8 },
+    { "num": 4, "par": 4, "si": 10 },
+    { "num": 5, "par": 3, "si": 12 },
+    { "num": 6, "par": 4, "si": 4 },
+    { "num": 7, "par": 4, "si": 2 },
+    { "num": 8, "par": 3, "si": 16 },
+    { "num": 9, "par": 5, "si": 18 },
+    { "num": 10, "par": 5, "si": 17 },
+    { "num": 11, "par": 4, "si": 5 },
+    { "num": 12, "par": 4, "si": 3 },
+    { "num": 13, "par": 4, "si": 1 },
+    { "num": 14, "par": 4, "si": 7 },
+    { "num": 15, "par": 3, "si": 15 },
+    { "num": 16, "par": 5, "si": 9 },
+    { "num": 17, "par": 3, "si": 11 },
+    { "num": 18, "par": 4, "si": 13 }
+  ]
+}
