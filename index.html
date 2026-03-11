@@ -527,7 +527,31 @@ function calcDayPoints(dayIndex) {
   const config = day.pointsConfig || {};
   const points = {}; // playerId -> points
 
-  if (day.format === 'stableford') {
+  if (day.format === 'strokeplay') {
+    const allPlayers = getAllPlayers();
+    const course = getCourse(day.courseId);
+    const ranked = allPlayers.map(p => {
+      const scores = getPlayerScores(dayIndex, p.id);
+      const brut = calcBrutTotal(scores, 0, 18);
+      let netTotal = null;
+      if (brut != null && course) {
+        let totalCR = 0;
+        for (let i = 0; i < 18; i++) totalCR += strokesReceived(p.handicap, course.holes[i].si);
+        netTotal = brut - totalCR;
+      }
+      return { id: p.id, net: netTotal };
+    }).sort((a, b) => {
+      if (a.net == null && b.net == null) return 0;
+      if (a.net == null) return 1;
+      if (b.net == null) return -1;
+      return a.net - b.net; // lowest net wins
+    });
+
+    const posPoints = config.positions || defaultStablefordPositions(allPlayers.length);
+    ranked.forEach((s, idx) => {
+      points[s.id] = posPoints[idx] !== undefined ? posPoints[idx] : 0;
+    });
+  } else if (day.format === 'stableford') {
     const allPlayers = getAllPlayers();
     const scores = allPlayers.map(p => ({
       id: p.id,
@@ -857,6 +881,7 @@ function renderWizard() {
         <div class="form-group">
           <label>Format</label>
           <select onchange="wizUpdateRound(${ri},'format',this.value)">
+            <option value="strokeplay" ${round.format === 'strokeplay' ? 'selected' : ''}>Stroke Play</option>
             <option value="stableford" ${round.format === 'stableford' ? 'selected' : ''}>Stableford</option>
             <option value="matchplay" ${round.format === 'matchplay' ? 'selected' : ''}>Match Play</option>
             <option value="chouette" ${round.format === 'chouette' ? 'selected' : ''}>Chouette</option>
@@ -872,7 +897,7 @@ function renderWizard() {
       if (!round.matches) round.matches = [];
       if (!round.pointsConfig) {
         const allP = wizardData.teams.reduce((a, t) => a.concat(t.players), []);
-        if (round.format === 'stableford') {
+        if (round.format === 'strokeplay' || round.format === 'stableford') {
           round.pointsConfig = { positions: defaultStablefordPositions(allP.length) };
           if (round.groups.length === 0) {
             // Auto-create 2 groups, split players evenly
@@ -904,7 +929,7 @@ function renderWizard() {
       bodyHtml += `<div class="card">
         <div class="section-title">Jour ${ri + 1} - ${formatLabel(round.format)}</div>`;
 
-      if (round.format === 'stableford') {
+      if (round.format === 'strokeplay' || round.format === 'stableford') {
         bodyHtml += '<div style="font-size:13px;color:var(--text-dim);margin-bottom:8px">Groupes de marche (logistiques)</div>';
         (round.groups || []).forEach((group, gi) => {
           bodyHtml += `<div style="margin-bottom:8px"><strong>Groupe ${String.fromCharCode(65 + gi)}</strong>: `;
@@ -1145,6 +1170,7 @@ function wizFinish() {
 }
 
 function formatLabel(format) {
+  if (format === 'strokeplay') return 'Stroke Play';
   if (format === 'stableford') return 'Stableford';
   if (format === 'matchplay') return 'Match Play';
   if (format === 'chouette') return 'Chouette';
@@ -1314,7 +1340,9 @@ function renderDayTab(el) {
     <div class="sign-progress-bar"><div class="sign-progress-fill" style="width:${allPlayers.length > 0 ? (signedCount / allPlayers.length * 100) : 0}%"></div></div>
   </div>`;
 
-  if (day.format === 'stableford') {
+  if (day.format === 'strokeplay') {
+    html += renderDayStrokePlay(dayIdx, day);
+  } else if (day.format === 'stableford') {
     html += renderDayStableford(dayIdx, day);
   } else if (day.format === 'matchplay') {
     html += renderDayMatchPlay(dayIdx, day);
@@ -1329,6 +1357,65 @@ function renderDayTab(el) {
 function setViewingDay(d) {
   viewingDay = d;
   renderDayTab(document.getElementById('app-content'));
+}
+
+function getLastHolePlayed(dayIndex, playerId) {
+  const scores = getPlayerScores(dayIndex, playerId);
+  for (let i = 17; i >= 0; i--) {
+    if (scores[i] != null) return i + 1;
+  }
+  return 0;
+}
+
+function calcNetTotal(dayIndex, playerId) {
+  const day = T.days[dayIndex];
+  const course = getCourse(day.courseId);
+  if (!course) return null;
+  const scores = getPlayerScores(dayIndex, playerId);
+  const brut = calcBrutTotal(scores, 0, 18);
+  if (brut == null) return null;
+  let totalCR = 0;
+  for (let i = 0; i < 18; i++) totalCR += strokesReceived(getPlayer(playerId).handicap, course.holes[i].si);
+  return brut - totalCR;
+}
+
+function renderDayStrokePlay(dayIdx, day) {
+  const allPlayers = getAllPlayers();
+  const config = day.pointsConfig || {};
+  const posPoints = config.positions || defaultStablefordPositions(allPlayers.length);
+
+  const ranked = allPlayers.map(p => ({
+    player: p,
+    brut: calcBrutTotal(getPlayerScores(dayIdx, p.id), 0, 18),
+    net: calcNetTotal(dayIdx, p.id),
+    lastHole: getLastHolePlayed(dayIdx, p.id),
+    signed: isPlayerSigned(dayIdx, p.id)
+  })).sort((a, b) => {
+    if (a.net == null && b.net == null) return 0;
+    if (a.net == null) return 1;
+    if (b.net == null) return -1;
+    return a.net - b.net;
+  });
+
+  let html = '<table class="lb-table"><thead><tr>';
+  html += '<th>Pos</th><th>Joueur</th><th class="num">Brut</th><th class="num">Net</th><th class="num">Trou</th><th class="num">Pts</th><th>Signe</th>';
+  html += '</tr></thead><tbody>';
+
+  ranked.forEach((item, idx) => {
+    const teamPts = posPoints[idx] !== undefined ? posPoints[idx] : 0;
+    html += `<tr>
+      <td class="pos">${idx + 1}</td>
+      <td>${esc(item.player.name)}</td>
+      <td class="num">${item.brut != null ? item.brut : '-'}</td>
+      <td class="num" style="font-weight:700">${item.net != null ? item.net : '-'}</td>
+      <td class="num" style="color:var(--text-dim)">${item.lastHole || '-'}</td>
+      <td class="num">${teamPts}</td>
+      <td class="num">${item.signed ? '&#10003;' : ''}${isAdmin() && item.signed ? ` <button class="btn btn-sm btn-danger" onclick="unlockCard(${dayIdx},'${item.player.id}')">Debloquer</button>` : ''}</td>
+    </tr>`;
+  });
+
+  html += '</tbody></table>';
+  return html;
 }
 
 function renderDayStableford(dayIdx, day) {
