@@ -1379,8 +1379,17 @@ function calcNetTotal(dayIndex, playerId) {
   return brut - totalCR;
 }
 
+function fmtVsPar(score, par) {
+  if (score == null) return '-';
+  const diff = score - par;
+  if (diff === 0) return 'E';
+  return diff > 0 ? '+' + diff : String(diff);
+}
+
 function renderDayStrokePlay(dayIdx, day) {
   const allPlayers = getAllPlayers();
+  const course = getCourse(day.courseId);
+  const par = course ? course.par : 72;
   const config = day.pointsConfig || {};
   const posPoints = config.positions || defaultStablefordPositions(allPlayers.length);
 
@@ -1406,8 +1415,8 @@ function renderDayStrokePlay(dayIdx, day) {
     html += `<tr>
       <td class="pos">${idx + 1}</td>
       <td>${esc(item.player.name)}</td>
-      <td class="num">${item.brut != null ? item.brut : '-'}</td>
-      <td class="num" style="font-weight:700">${item.net != null ? item.net : '-'}</td>
+      <td class="num">${fmtVsPar(item.brut, par)}</td>
+      <td class="num" style="font-weight:700">${fmtVsPar(item.net, par)}</td>
       <td class="num" style="color:var(--text-dim)">${item.lastHole || '-'}</td>
       <td class="num">${teamPts}</td>
       <td class="num">${item.signed ? '&#10003;' : ''}${isAdmin() && item.signed ? ` <button class="btn btn-sm btn-danger" onclick="unlockCard(${dayIdx},'${item.player.id}')">Debloquer</button>` : ''}</td>
