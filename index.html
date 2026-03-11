@@ -133,13 +133,19 @@ label{display:block;font-size:13px;color:var(--text-dim);margin-bottom:4px}
 /* Animations */
 @keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
 .fade-in{animation:fadeIn .25s ease}
+.conn-dot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:4px}
+.conn-online{background:#4caf50}
+.conn-offline{background:#ff9800}
+.share-url{background:var(--input-bg);border:1px solid var(--border);border-radius:8px;padding:10px 12px;font-size:13px;word-break:break-all;color:var(--accent);margin-bottom:8px}
 </style>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
 </head>
 <body>
 
 <div id="app-content" class="app-content"></div>
 
-<nav id="bottom-nav" class="bottom-nav hidden">
+<nav id="bottom-nav" class="bottom-nav hidden"><span id="conn-indicator" class="conn-dot conn-offline" style="position:absolute;top:6px;right:8px"></span>
   <button data-tab="leaderboard" onclick="switchTab('leaderboard')">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.27 5.82 22 7 14.14 2 9.27l6.91-1.01z"/></svg>
     Classement
@@ -197,19 +203,108 @@ const PRELOADED_COURSES = [
   }
 ];
 
+// ========== FIREBASE ==========
+const firebaseConfig = {
+  apiKey: "AIzaSyCtXOy8nCQw31MTdFB42gyGIPErEOYuXhc",
+  authDomain: "golf-leaderboard-6e8ba.firebaseapp.com",
+  databaseURL: "https://golf-leaderboard-6e8ba-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "golf-leaderboard-6e8ba",
+  storageBucket: "golf-leaderboard-6e8ba.firebasestorage.app",
+  messagingSenderId: "237424657190",
+  appId: "1:237424657190:web:12e17c5ed72dbe0ba1b7e7"
+};
+let db = null;
+try {
+  firebase.initializeApp(firebaseConfig);
+  db = firebase.database();
+} catch(e) { console.warn('Firebase init failed:', e); }
+
 // ========== STATE ==========
 let T = null; // Tournament state
 let currentTab = 'leaderboard';
 let wizardStep = 0;
 let wizardData = {};
+let tournamentId = null;
+let isOnline = false;
+let lastSaveTime = 0;
 
 function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,7)}
+function generateTournamentId(){
+  const chars='ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789';
+  let id='';for(let i=0;i<6;i++) id+=chars[Math.floor(Math.random()*chars.length)];
+  return id;
+}
+function getTournamentId(){
+  const hash=window.location.hash.slice(1);
+  if(hash && hash.length>=4) return hash;
+  return localStorage.getItem('golf-tournament-id')||null;
+}
+function setTournamentId(id){
+  tournamentId=id;
+  window.location.hash=id;
+  localStorage.setItem('golf-tournament-id',id);
+}
 
 // ========== PERSISTENCE ==========
-function save(){localStorage.setItem('golf-tournament',JSON.stringify(T))}
+function save(){
+  localStorage.setItem('golf-tournament',JSON.stringify(T));
+  if(tournamentId && db){
+    lastSaveTime=Date.now();
+    db.ref('tournaments/'+tournamentId).update({
+      meta:{name:T.name,updatedAt:Date.now()},
+      teams:T.teams,
+      courses:T.courses,
+      days:T.days,
+      scores:T.scores||{}
+    }).catch(err=>console.warn('Firebase write failed:',err));
+  }
+}
+function saveScore(dayIndex, playerId){
+  localStorage.setItem('golf-tournament',JSON.stringify(T));
+  if(tournamentId && db){
+    lastSaveTime=Date.now();
+    const key=`d${dayIndex}_${playerId}`;
+    db.ref(`tournaments/${tournamentId}/scores/${key}`).set(T.scores[key])
+      .catch(err=>console.warn('Firebase score write failed:',err));
+  }
+}
 function load(){
   const raw=localStorage.getItem('golf-tournament');
   if(raw){try{T=JSON.parse(raw)}catch(e){T=null}}
+  tournamentId=getTournamentId();
+}
+
+function startFirebaseSync(){
+  if(!tournamentId||!db) return;
+  const ref=db.ref('tournaments/'+tournamentId);
+  ref.on('value',(snapshot)=>{
+    const data=snapshot.val();
+    if(!data) return;
+    // Skip re-render if we just wrote (echo suppression)
+    if(Date.now()-lastSaveTime<1500) return;
+    T={
+      name:data.meta?.name||T?.name||'Tournoi',
+      teams:data.teams||[],
+      courses:data.courses||[],
+      days:data.days||[],
+      scores:data.scores||{}
+    };
+    localStorage.setItem('golf-tournament',JSON.stringify(T));
+    render();
+  });
+  if(db){
+    db.ref('.info/connected').on('value',(snap)=>{
+      isOnline=snap.val()===true;
+      updateConnectionDot();
+    });
+  }
+}
+function updateConnectionDot(){
+  const el=document.getElementById('conn-indicator');
+  if(el){
+    el.className=isOnline?'conn-dot conn-online':'conn-dot conn-offline';
+    el.title=isOnline?'En ligne':'Hors ligne';
+  }
 }
 
 // ========== HANDICAP & SCORING ==========
@@ -280,7 +375,7 @@ function setScore(dayIndex, playerId, holeIndex, value){
   const key=`d${dayIndex}_${playerId}`;
   if(!T.scores[key]) T.scores[key]=new Array(18).fill(null);
   T.scores[key][holeIndex]=value;
-  save();
+  saveScore(dayIndex, playerId);
 }
 function getHoleScore(dayIndex, playerId, holeIndex){
   const s=getScores(dayIndex,playerId);
@@ -725,7 +820,10 @@ function wizardFinish(){
     days,
     scores:{}
   };
+  const newId=generateTournamentId();
+  setTournamentId(newId);
   save();
+  startFirebaseSync();
   currentTab='leaderboard';
   switchTab('leaderboard');
 }
@@ -1262,6 +1360,18 @@ function renderConfig(container){
   }
   html+=`</div>`;
 
+  // Sharing
+  if(tournamentId){
+    const shareUrl=window.location.origin+window.location.pathname+'#'+tournamentId;
+    html+=`<div class="config-section"><div class="section-title">Partager</div>`;
+    html+=`<div class="card"><div class="text-dim" style="font-size:12px;margin-bottom:6px">Lien du tournoi (partagez-le avec les joueurs) :</div>`;
+    html+=`<div class="share-url" id="share-url">${esc(shareUrl)}</div>`;
+    html+=`<button class="btn btn-primary btn-block mb-8" onclick="cfgCopyLink()">Copier le lien</button>`;
+    html+=`<div class="text-dim" style="font-size:12px">Code : <strong style="color:var(--accent);font-size:16px">${esc(tournamentId)}</strong></div>`;
+    html+=`<div style="display:flex;align-items:center;margin-top:8px"><span id="conn-status-cfg" class="conn-dot ${isOnline?'conn-online':'conn-offline'}"></span><span class="text-dim" style="font-size:12px">${isOnline?'Synchronisation en direct':'Hors ligne — données locales'}</span></div>`;
+    html+=`</div></div>`;
+  }
+
   // Actions
   html+=`<div class="config-section"><div class="section-title">Actions</div>`;
   html+=`<button class="btn btn-secondary btn-block mb-8" onclick="cfgExport()">Exporter JSON</button>`;
@@ -1338,24 +1448,92 @@ function cfgReset(){
   showWizard();
 }
 
+function cfgCopyLink(){
+  const url=window.location.origin+window.location.pathname+'#'+tournamentId;
+  if(navigator.clipboard){
+    navigator.clipboard.writeText(url).then(()=>alert('Lien copié !')).catch(()=>{
+      prompt('Copiez ce lien :',url);
+    });
+  } else {
+    prompt('Copiez ce lien :',url);
+  }
+}
 function cfgNewWizard(){
   if(!confirm('Créer un nouveau tournoi ? Les données actuelles seront conservées jusqu\'à la validation.')) return;
   showWizard();
 }
 
 // ========== INIT ==========
+function initApp(data){
+  if(data){
+    T=data;
+    if(!T.scores) T.scores={};
+    if(!T.teams) T.teams=[];
+    if(!T.days) T.days=[];
+    if(!T.courses) T.courses=[];
+    localStorage.setItem('golf-tournament',JSON.stringify(T));
+    lbSelectedDay=T.days.length>0?0:'general';
+    startFirebaseSync();
+    switchTab('leaderboard');
+  } else {
+    showWizard();
+  }
+}
+
 load();
-if(T){
-  // Validate minimal structure
-  if(!T.scores) T.scores={};
-  if(!T.teams) T.teams=[];
-  if(!T.days) T.days=[];
-  if(!T.courses) T.courses=[];
-  lbSelectedDay=T.days.length>0?0:'general';
-  switchTab('leaderboard');
+
+if(tournamentId && db){
+  // Try to load from Firebase first
+  db.ref('tournaments/'+tournamentId).once('value').then((snapshot)=>{
+    const data=snapshot.val();
+    if(data){
+      initApp({
+        name:data.meta?.name||'Tournoi',
+        teams:data.teams||[],
+        courses:data.courses||[],
+        days:data.days||[],
+        scores:data.scores||{}
+      });
+    } else if(T){
+      // Firebase has nothing but we have local data — upload it
+      save();
+      initApp(T);
+    } else {
+      showWizard();
+    }
+  }).catch(()=>{
+    // Offline fallback
+    if(T) initApp(T);
+    else showWizard();
+  });
+} else if(T){
+  initApp(T);
 } else {
   showWizard();
 }
+
+// Listen for hash changes (someone pastes a new tournament link)
+window.addEventListener('hashchange',()=>{
+  const newId=window.location.hash.slice(1);
+  if(newId && newId!==tournamentId && newId.length>=4){
+    tournamentId=newId;
+    localStorage.setItem('golf-tournament-id',newId);
+    if(db){
+      db.ref('tournaments/'+newId).once('value').then((snapshot)=>{
+        const data=snapshot.val();
+        if(data){
+          initApp({
+            name:data.meta?.name||'Tournoi',
+            teams:data.teams||[],
+            courses:data.courses||[],
+            days:data.days||[],
+            scores:data.scores||{}
+          });
+        }
+      });
+    }
+  }
+});
 </script>
 </body>
 </html>
