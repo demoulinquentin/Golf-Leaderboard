@@ -1673,6 +1673,37 @@ function renderScorecardTab(el, groupIndex) {
     html += `<tr><td colspan="22" style="padding:0;height:3px;background:var(--border)"></td></tr>`;
   });
 
+  // Match play result row
+  if (day.format === 'matchplay' && players.length === 2) {
+    const match = (day.matches || []).find(m =>
+      (m.player1 === players[0].id && m.player2 === players[1].id) ||
+      (m.player1 === players[1].id && m.player2 === players[0].id)
+    );
+    if (match) {
+      const result = calcMatchPlayStatus(dayIndex, match);
+      const p1 = getPlayer(match.player1);
+      const p1First = players[0].id === match.player1 ? p1.name.split(' ')[0] : getPlayer(match.player2).name.split(' ')[0];
+      let cumul = 0;
+      html += `<tr><td class="row-label" style="font-size:10px;font-weight:700;color:var(--accent)">Match</td>`;
+      for (let half = 0; half < 2; half++) {
+        const start = half * 9;
+        for (let i = start; i < start + 9; i++) {
+          const r = result.results[i];
+          if (r === 'p1') { cumul++; html += `<td class="mh-won" style="font-size:9px;font-weight:700">${p1.name.charAt(0)}</td>`; }
+          else if (r === 'p2') { cumul--; html += `<td class="mh-lost" style="font-size:9px;font-weight:700">${getPlayer(match.player2).name.charAt(0)}</td>`; }
+          else if (r === 'halved') { html += `<td class="mh-halved" style="font-size:9px">=</td>`; }
+          else { html += `<td></td>`; }
+        }
+        // OUT/IN column: show running cumulative
+        const label = cumul === 0 ? 'AS' : (cumul > 0 ? `${p1.name.split(' ')[0].charAt(0)}+${Math.abs(cumul)}` : `${getPlayer(match.player2).name.split(' ')[0].charAt(0)}+${Math.abs(cumul)}`);
+        html += `<td class="${half === 0 ? 'out-col' : 'in-col'}" style="font-size:9px;font-weight:700">${label}</td>`;
+      }
+      // TOTAL column: match status
+      html += `<td class="total-col" style="font-size:9px;font-weight:700;color:var(--accent)">${esc(result.status)}</td>`;
+      html += '</tr>';
+    }
+  }
+
   html += '</tbody></table></div>';
 
   // Show stableford/format summary below card
