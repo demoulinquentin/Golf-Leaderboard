@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>Carnac Major - Leaderboard Golf</title>
+<title>Golf Tournament Leaderboard</title>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -11,21 +11,30 @@
 --accent:#ffd700;--birdie:#28a745;--eagle:#ffd700;--bogey:#e87461;--double:#c0392b;
 --nav-active:#ffd700;--border:#007a56;--input-bg:#002e22;--danger:#c0392b;
 }
-html,body{height:100%;font-family:"Georgia","Times New Roman",serif;background:var(--bg);color:var(--text);-webkit-tap-highlight-color:transparent;overflow:hidden}
+html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--text);-webkit-tap-highlight-color:transparent;overflow:hidden}
 body{display:flex;flex-direction:column}
-button{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;cursor:pointer;border:none;background:none;color:inherit;font-size:inherit}
-input,select{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;font-size:16px;background:var(--input-bg);color:var(--text);border:1px solid var(--border);border-radius:8px;padding:10px 12px;width:100%;outline:none}
+button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit;font-size:inherit}
+input,select{font-family:inherit;font-size:16px;background:var(--input-bg);color:var(--text);border:1px solid var(--border);border-radius:8px;padding:10px 12px;width:100%;outline:none}
 input:focus,select:focus{border-color:var(--accent)}
 select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23a0b8a0' stroke-width='2' fill='none'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center}
 label{display:block;font-size:13px;color:var(--text-dim);margin-bottom:4px}
 
 /* Layout */
-.app-content{flex:1;overflow-y:auto;padding:12px 12px 80px;-webkit-overflow-scrolling:touch}
+.app-header{display:flex;align-items:center;justify-content:space-between;padding:10px 14px 6px;min-height:44px}
+.app-header h1{font-family:"Georgia","Times New Roman",serif;font-size:17px;color:var(--accent);letter-spacing:.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:1}
+.header-right{display:flex;align-items:center;gap:8px}
+.gear-btn{width:36px;height:36px;display:flex;align-items:center;justify-content:center;border-radius:50%;background:var(--card);transition:background .2s}
+.gear-btn:active{background:var(--card-light)}
+.gear-btn svg{width:20px;height:20px;stroke:var(--text-dim)}
+.conn-dot{width:8px;height:8px;border-radius:50%;display:inline-block}
+.conn-online{background:#4caf50}
+.conn-offline{background:#ff9800}
+.app-content{flex:1;overflow-y:auto;padding:0 12px 90px;-webkit-overflow-scrolling:touch}
 .bottom-nav{position:fixed;bottom:0;left:0;right:0;display:flex;background:#002a1f;border-top:2px solid var(--accent);z-index:100;padding-bottom:env(safe-area-inset-bottom)}
-.bottom-nav button{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 4px 6px;font-size:10px;color:var(--text-dim);min-height:56px;transition:color .2s}
+.bottom-nav button{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:10px 4px 8px;color:var(--text-dim);min-height:52px;transition:color .2s}
 .bottom-nav button.active{color:var(--nav-active)}
-.bottom-nav button svg{width:22px;height:22px}
-.bottom-nav button.active svg{fill:var(--nav-active);stroke:var(--nav-active)}
+.bottom-nav button svg{width:24px;height:24px;stroke:currentColor;fill:none}
+.bottom-nav button.active svg{stroke:var(--nav-active)}
 
 /* Common UI */
 .btn{display:inline-flex;align-items:center;justify-content:center;padding:10px 20px;border-radius:8px;font-weight:600;min-height:44px;transition:background .2s,transform .1s}
@@ -36,28 +45,36 @@ label{display:block;font-size:13px;color:var(--text-dim);margin-bottom:4px}
 .btn-sm{padding:6px 12px;font-size:13px;min-height:36px}
 .btn-block{width:100%;justify-content:center}
 .card{background:var(--card);border-radius:12px;padding:16px;margin-bottom:12px}
-.chip-row{display:flex;gap:6px;overflow-x:auto;padding:4px 0;-webkit-overflow-scrolling:touch;scrollbar-width:none}
-.chip-row::-webkit-scrollbar{display:none}
-.chip{padding:8px 16px;border-radius:20px;font-size:13px;font-weight:600;white-space:nowrap;background:var(--card);min-height:36px;display:flex;align-items:center}
-.chip.active{background:var(--accent);color:#1a1a1a}
-.page-title{font-size:22px;font-weight:700;margin-bottom:12px;font-family:"Georgia","Times New Roman",serif;color:var(--accent);letter-spacing:0.5px}
-.section-title{font-size:15px;font-weight:600;margin-bottom:8px;color:var(--accent);font-family:"Georgia","Times New Roman",serif;text-transform:uppercase;letter-spacing:1px;font-size:12px}
+.page-title{font-size:20px;font-weight:700;margin-bottom:12px;font-family:"Georgia","Times New Roman",serif;color:var(--accent);letter-spacing:.5px}
+.section-title{font-size:12px;font-weight:600;margin-bottom:8px;color:var(--accent);font-family:"Georgia","Times New Roman",serif;text-transform:uppercase;letter-spacing:1px}
 .form-group{margin-bottom:14px}
 .form-row{display:flex;gap:10px}
 .form-row>*{flex:1}
 .divider{height:1px;background:var(--border);margin:16px 0}
 .tag{display:inline-block;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:600}
-.text-green{color:var(--birdie)}
-.text-red{color:var(--bogey)}
-.text-gold{color:var(--accent)}
+.hidden{display:none !important}
 .text-dim{color:var(--text-dim)}
 .text-center{text-align:center}
 .mt-8{margin-top:8px}.mt-12{margin-top:12px}.mt-16{margin-top:16px}.mb-8{margin-bottom:8px}.mb-12{margin-bottom:12px}
 
+/* Welcome screen */
+.welcome-overlay{position:fixed;inset:0;background:var(--bg);z-index:300;display:flex;flex-direction:column;overflow-y:auto;-webkit-overflow-scrolling:touch}
+.welcome-inner{max-width:420px;width:100%;margin:0 auto;padding:24px 20px}
+.welcome-title{font-family:"Georgia","Times New Roman",serif;font-size:28px;color:var(--accent);text-align:center;margin-bottom:4px}
+.welcome-subtitle{text-align:center;color:var(--text-dim);font-size:14px;margin-bottom:24px}
+.welcome-teams{margin-bottom:24px}
+.welcome-team{background:var(--card);border-radius:10px;padding:12px 14px;margin-bottom:8px}
+.welcome-team-name{font-weight:700;color:var(--accent);font-family:"Georgia","Times New Roman",serif;margin-bottom:4px;font-size:15px}
+.welcome-team-players{color:var(--text-dim);font-size:13px}
+.welcome-pick-title{font-family:"Georgia","Times New Roman",serif;font-size:16px;color:var(--accent);text-align:center;margin-bottom:12px}
+.welcome-player-btn{display:block;width:100%;padding:14px 16px;background:var(--card);border-radius:10px;margin-bottom:8px;text-align:left;font-size:15px;font-weight:600;min-height:48px;transition:background .2s}
+.welcome-player-btn:active{background:var(--card-light)}
+.welcome-player-btn .wp-team{font-size:12px;color:var(--text-dim);font-weight:400;margin-left:8px}
+
 /* Wizard */
 .wizard-overlay{position:fixed;inset:0;background:var(--bg);z-index:200;display:flex;flex-direction:column;overflow:hidden}
 .wizard-header{padding:16px;display:flex;align-items:center;gap:12px}
-.wizard-header h2{font-size:18px;flex:1}
+.wizard-header h2{font-size:18px;font-family:"Georgia","Times New Roman",serif;color:var(--accent);flex:1}
 .wizard-progress{display:flex;gap:4px;padding:0 16px 12px}
 .wizard-progress .step{flex:1;height:4px;border-radius:2px;background:var(--card)}
 .wizard-progress .step.done{background:var(--accent)}
@@ -70,109 +87,134 @@ label{display:block;font-size:13px;color:var(--text-dim);margin-bottom:4px}
 .player-item .phcp{font-size:13px;color:var(--text-dim);width:60px;text-align:right}
 .remove-btn{width:32px;height:32px;border-radius:50%;background:var(--danger);display:flex;align-items:center;justify-content:center;font-size:18px;color:#fff}
 
-/* Score entry */
-.hole-header{text-align:center;margin-bottom:16px}
-.hole-header .hole-num{font-size:36px;font-weight:800;color:var(--accent);font-family:"Georgia","Times New Roman",serif}
-.hole-header .hole-info{font-size:14px;color:var(--text-dim)}
-.score-player{margin-bottom:16px}
-.score-player .sp-name{font-weight:600;margin-bottom:4px}
-.score-player .sp-strokes{font-size:12px;color:var(--accent);margin-bottom:8px}
-.score-grid{display:flex;flex-wrap:wrap;gap:6px}
-.score-btn{width:48px;height:48px;border-radius:12px;font-size:18px;font-weight:700;display:flex;align-items:center;justify-content:center;background:var(--card-light);transition:background .15s,transform .1s}
-.score-btn:active{transform:scale(.92)}
-.score-btn.selected{background:var(--accent);color:#1a1a1a}
-.score-btn.par-btn{border:2px solid var(--accent)}
-.hole-nav{display:flex;gap:10px;margin-top:16px}
-.hole-nav .btn{flex:1}
-
 /* Scorecard */
-.scorecard-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
-.scorecard{border-collapse:collapse;font-size:12px;min-width:600px;width:100%}
-.scorecard th,.scorecard td{padding:6px 4px;text-align:center;border:1px solid var(--border);white-space:nowrap}
-.scorecard th{background:var(--card-light);font-weight:600;font-size:11px}
-.scorecard .row-label{text-align:left;font-weight:600;padding-left:8px;background:var(--card);min-width:70px}
-.scorecard .total-col{background:var(--card-light);font-weight:700}
-.sc-eagle{background:#8b6914;color:#fff}
-.sc-birdie{background:#1a6630;color:#c8ffd4}
-.sc-par{background:transparent}
-.sc-bogey{background:#5c2018;color:#f4a89a}
-.sc-double{background:#7a1a10;color:#f9c4bc}
+.scorecard-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:0 -12px;padding:0 12px}
+.scorecard{border-collapse:collapse;font-size:11px;min-width:700px;width:100%}
+.scorecard th,.scorecard td{padding:5px 3px;text-align:center;border:1px solid var(--border);white-space:nowrap}
+.scorecard th{background:var(--card-light);font-weight:600;font-size:10px}
+.scorecard .row-label{text-align:left;font-weight:600;padding-left:6px;background:var(--card);min-width:80px;max-width:100px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;position:sticky;left:0;z-index:2}
+.scorecard .row-label-header{text-align:left;font-weight:600;padding-left:6px;background:var(--card-light);min-width:80px;max-width:100px;position:sticky;left:0;z-index:3}
+.scorecard .total-col{background:rgba(255,215,0,.08);font-weight:700}
+.scorecard .out-col,.scorecard .in-col{background:rgba(255,215,0,.05);font-weight:600}
+.scorecard .brut-cell{cursor:pointer;min-width:28px;position:relative}
+.scorecard .brut-cell.editable:active{background:rgba(255,215,0,.15)}
+.scorecard .brut-cell.locked{opacity:.7;cursor:default}
+.sc-eagle{background:#8b6914 !important;color:#fff}
+.sc-birdie{background:#1a6630 !important;color:#c8ffd4}
+.sc-par{}
+.sc-bogey{background:#5c2018 !important;color:#f4a89a}
+.sc-double{background:#7a1a10 !important;color:#f9c4bc}
+
+/* Score modal */
+.score-modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:400;display:flex;align-items:flex-end;justify-content:center}
+.score-modal{background:var(--bg);border-top:2px solid var(--accent);border-radius:16px 16px 0 0;padding:20px;width:100%;max-width:420px}
+.score-modal-title{font-family:"Georgia","Times New Roman",serif;font-size:16px;color:var(--accent);text-align:center;margin-bottom:4px}
+.score-modal-sub{text-align:center;color:var(--text-dim);font-size:13px;margin-bottom:16px}
+.score-grid{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+.score-num-btn{width:52px;height:52px;border-radius:12px;font-size:20px;font-weight:700;display:flex;align-items:center;justify-content:center;background:var(--card-light);transition:background .15s,transform .1s}
+.score-num-btn:active{transform:scale(.92)}
+.score-num-btn.selected{background:var(--accent);color:#1a1a1a}
+.score-num-btn.par-btn{border:2px solid var(--accent)}
+.score-modal-actions{display:flex;gap:10px;margin-top:16px}
+.score-modal-actions .btn{flex:1}
+
+/* Sign modal */
+.sign-modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:400;display:flex;align-items:center;justify-content:center;padding:16px}
+.sign-modal{background:var(--bg);border:2px solid var(--accent);border-radius:16px;padding:20px;width:100%;max-width:420px;max-height:85vh;overflow-y:auto}
+.sign-modal h3{font-family:"Georgia","Times New Roman",serif;font-size:18px;color:var(--accent);text-align:center;margin-bottom:16px}
+
+/* Leaderboard tables */
+.lb-table{width:100%;border-collapse:collapse;font-size:13px}
+.lb-table th{text-align:left;padding:8px 6px;font-size:11px;color:var(--text-dim);border-bottom:1px solid var(--border);font-weight:600}
+.lb-table td{padding:8px 6px;border-bottom:1px solid rgba(255,255,255,.05)}
+.lb-table th.num,.lb-table td.num{text-align:center}
+.lb-table tr.highlight td{color:var(--accent);font-weight:700}
+.lb-table .pos{width:30px;font-weight:700;color:var(--accent)}
 
 /* Match play */
 .match-card{background:var(--card);border-radius:12px;padding:14px;margin-bottom:12px}
-.match-players{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
-.match-player{flex:1;text-align:center;font-weight:700;font-size:15px}
+.match-players{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.match-player{flex:1;text-align:center;font-weight:700;font-size:14px}
 .match-vs{color:var(--text-dim);font-size:12px;padding:0 8px}
-.match-status{text-align:center;font-size:18px;font-weight:800;color:var(--accent);margin-bottom:10px;font-family:"Georgia","Times New Roman",serif}
+.match-status{text-align:center;font-size:18px;font-weight:800;color:var(--accent);margin-bottom:8px;font-family:"Georgia","Times New Roman",serif}
 .match-holes{display:flex;gap:3px;justify-content:center;flex-wrap:wrap}
-.match-hole{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700}
+.match-hole{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700}
 .mh-won{background:var(--birdie);color:#fff}
 .mh-lost{background:var(--bogey);color:#fff}
 .mh-halved{background:var(--card-light);color:var(--text-dim)}
 .mh-empty{background:var(--input-bg);color:var(--text-dim)}
 
-/* Leaderboard */
-.lb-table{width:100%;border-collapse:collapse;font-size:13px}
-.lb-table th{text-align:left;padding:8px 6px;font-size:11px;color:var(--text-dim);border-bottom:1px solid var(--border)}
-.lb-table td{padding:8px 6px;border-bottom:1px solid rgba(255,255,255,.05)}
-.lb-table tr.team-row{background:var(--card-light)}
-.lb-table tr.team-row td{font-weight:700;color:var(--accent);font-size:12px}
-.lb-table .pos{width:30px;font-weight:700;color:var(--accent)}
-.lb-table .clickable{cursor:pointer}
-.lb-table .clickable:active{background:rgba(255,255,255,.05)}
+/* Chouette */
+.chouette-group{background:var(--card);border-radius:12px;padding:14px;margin-bottom:12px}
+.chouette-title{font-family:"Georgia","Times New Roman",serif;font-size:14px;color:var(--accent);margin-bottom:8px}
 
-/* Config */
+/* Config panel */
 .config-section{margin-bottom:20px}
 .config-item{display:flex;justify-content:space-between;align-items:center;padding:12px;background:var(--card);border-radius:8px;margin-bottom:6px;min-height:48px}
-.config-item .ci-label{font-weight:600}
+.config-item .ci-label{font-weight:600;flex:1}
 .config-item .ci-value{color:var(--text-dim);font-size:13px}
+.share-url{background:var(--input-bg);border:1px solid var(--border);border-radius:8px;padding:10px 12px;font-size:13px;word-break:break-all;color:var(--accent);margin-bottom:8px}
 
-/* Hidden */
-.hidden{display:none !important}
+/* Day selector chips */
+.day-chips{display:flex;gap:6px;overflow-x:auto;padding:4px 0;margin-bottom:12px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.day-chips::-webkit-scrollbar{display:none}
+.day-chip{padding:8px 16px;border-radius:20px;font-size:13px;font-weight:600;white-space:nowrap;background:var(--card);min-height:36px;display:flex;align-items:center}
+.day-chip.active{background:var(--accent);color:#1a1a1a}
+
+/* Signing progress */
+.sign-progress{background:var(--card);border-radius:10px;padding:12px 14px;margin-bottom:12px;font-size:13px}
+.sign-progress-bar{height:4px;border-radius:2px;background:var(--input-bg);margin-top:8px;overflow:hidden}
+.sign-progress-fill{height:100%;background:var(--accent);transition:width .3s}
 
 /* Animations */
-@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
-.fade-in{animation:fadeIn .25s ease}
-.conn-dot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:4px}
-.conn-online{background:#4caf50}
-.conn-offline{background:#ff9800}
-.share-url{background:var(--input-bg);border:1px solid var(--border);border-radius:8px;padding:10px 12px;font-size:13px;word-break:break-all;color:var(--accent);margin-bottom:8px}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.fade-in{animation:fadeIn .2s ease}
 </style>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
 </head>
 <body>
 
+<div id="app-header" class="app-header hidden">
+  <h1 id="header-title">Golf Tournament</h1>
+  <div class="header-right">
+    <span id="conn-indicator" class="conn-dot conn-offline"></span>
+    <button id="gear-btn" class="gear-btn hidden" onclick="switchTab('config')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 01-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+    </button>
+  </div>
+</div>
+
 <div id="app-content" class="app-content"></div>
 
-<nav id="bottom-nav" class="bottom-nav hidden"><span id="conn-indicator" class="conn-dot conn-offline" style="position:absolute;top:6px;right:8px"></span>
-  <button data-tab="leaderboard" onclick="switchTab('leaderboard')">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.27 5.82 22 7 14.14 2 9.27l6.91-1.01z"/></svg>
-    Classement
+<nav id="bottom-nav" class="bottom-nav hidden">
+  <button data-tab="teams" onclick="switchTab('teams')">
+    <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M6 2h12v6a6 6 0 01-12 0V2z"/><path d="M6 4H2v2a4 4 0 004 4"/><path d="M18 4h4v2a4 4 0 01-4 4"/><path d="M12 14v3"/><path d="M8 21h8"/><path d="M12 17h0"/></svg>
   </button>
-  <button data-tab="scores" onclick="switchTab('scores')">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18M3 9h18M3 15h18"/></svg>
-    Scores
+  <button data-tab="players" onclick="switchTab('players')">
+    <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
   </button>
-  <button data-tab="scorecards" onclick="switchTab('scorecards')">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 8h20"/><path d="M8 4v16"/></svg>
-    Cartes
+  <button data-tab="day" onclick="switchTab('day')">
+    <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>
   </button>
-  <button data-tab="matchplay" onclick="switchTab('matchplay')">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="8" cy="8" r="5"/><circle cx="16" cy="16" r="5"/></svg>
-    Matchs
+  <button data-tab="cardA" onclick="switchTab('cardA')">
+    <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/><line x1="9" y1="3" x2="9" y2="21"/><line x1="15" y1="3" x2="15" y2="21"/><text x="12" y="13.5" text-anchor="middle" font-size="7" font-weight="700" fill="currentColor" stroke="none">A</text></svg>
   </button>
-  <button data-tab="config" onclick="switchTab('config')">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 01-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
-    Config
+  <button data-tab="cardB" onclick="switchTab('cardB')">
+    <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/><line x1="9" y1="3" x2="9" y2="21"/><line x1="15" y1="3" x2="15" y2="21"/><text x="12" y="13.5" text-anchor="middle" font-size="7" font-weight="700" fill="currentColor" stroke="none">B</text></svg>
   </button>
 </nav>
 
+<div id="welcome-screen" class="welcome-overlay hidden"></div>
+<div id="wizard-screen" class="wizard-overlay hidden"></div>
+<div id="score-modal" class="score-modal-overlay hidden"></div>
+<div id="sign-modal" class="sign-modal-overlay hidden"></div>
+
 <script>
 // ========== PRE-LOADED COURSES ==========
-const PRELOADED_COURSES = [
+const COURSES = [
   {
-    id:'etretat', name:"Golf d'Étretat", par:72,
+    id:'etretat', name:"Golf d'Etretat", par:72,
     holes:[
       {num:1,par:5,si:8},{num:2,par:3,si:16},{num:3,par:4,si:2},{num:4,par:4,si:10},
       {num:5,par:4,si:6},{num:6,par:5,si:12},{num:7,par:4,si:13},{num:8,par:4,si:4},
@@ -182,7 +224,7 @@ const PRELOADED_COURSES = [
     ]
   },
   {
-    id:'deauville', name:"Golf Barrière de Deauville", par:72,
+    id:'deauville', name:"Golf Barriere de Deauville", par:72,
     holes:[
       {num:1,par:4,si:6},{num:2,par:5,si:14},{num:3,par:3,si:8},{num:4,par:4,si:10},
       {num:5,par:3,si:12},{num:6,par:4,si:4},{num:7,par:4,si:2},{num:8,par:3,si:16},
@@ -192,7 +234,7 @@ const PRELOADED_COURSES = [
     ]
   },
   {
-    id:'saintjulien', name:"Golf Barrière de Saint-Julien", par:73,
+    id:'saintjulien', name:"Golf Barriere de Saint-Julien", par:73,
     holes:[
       {num:1,par:4,si:4},{num:2,par:4,si:14},{num:3,par:5,si:12},{num:4,par:3,si:16},
       {num:5,par:4,si:10},{num:6,par:3,si:6},{num:7,par:4,si:18},{num:8,par:4,si:2},
@@ -220,1318 +262,1608 @@ try {
 } catch(e) { console.warn('Firebase init failed:', e); }
 
 // ========== STATE ==========
-let T = null; // Tournament state
-let currentTab = 'leaderboard';
-let wizardStep = 0;
-let wizardData = {};
+let T = null; // Tournament object
+let currentTab = 'teams';
+let currentPlayerId = null;
 let tournamentId = null;
 let isOnline = false;
 let lastSaveTime = 0;
+let wizardStep = 0;
+let wizardData = {};
+let scoreModalState = null; // {dayIndex, playerId, holeIndex}
+let viewingDay = null; // for journee tab, null = current day
 
-function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,7)}
-function generateTournamentId(){
-  const chars='ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789';
-  let id='';for(let i=0;i<6;i++) id+=chars[Math.floor(Math.random()*chars.length)];
+// ========== UTILITIES ==========
+function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 7); }
+function generateTournamentId() {
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789';
+  let id = '';
+  for (let i = 0; i < 6; i++) id += chars[Math.floor(Math.random() * chars.length)];
   return id;
 }
-function getTournamentId(){
-  const hash=window.location.hash.slice(1);
-  if(hash && hash.length>=4) return hash;
-  return localStorage.getItem('golf-tournament-id')||null;
-}
-function setTournamentId(id){
-  tournamentId=id;
-  window.location.hash=id;
-  localStorage.setItem('golf-tournament-id',id);
+
+function getTournamentId() {
+  const hash = window.location.hash.slice(1);
+  if (hash && hash.length >= 4) return hash;
+  return null;
 }
 
-// ========== PERSISTENCE ==========
-function save(){
-  localStorage.setItem('golf-tournament',JSON.stringify(T));
-  if(tournamentId && db){
-    lastSaveTime=Date.now();
-    db.ref('tournaments/'+tournamentId).update({
-      meta:{name:T.name,updatedAt:Date.now()},
-      teams:T.teams,
-      courses:T.courses,
-      days:T.days,
-      scores:T.scores||{}
-    }).catch(err=>console.warn('Firebase write failed:',err));
-  }
-}
-function saveScore(dayIndex, playerId){
-  localStorage.setItem('golf-tournament',JSON.stringify(T));
-  if(tournamentId && db){
-    lastSaveTime=Date.now();
-    const key=`d${dayIndex}_${playerId}`;
-    db.ref(`tournaments/${tournamentId}/scores/${key}`).set(T.scores[key])
-      .catch(err=>console.warn('Firebase score write failed:',err));
-  }
-}
-function load(){
-  const raw=localStorage.getItem('golf-tournament');
-  if(raw){try{T=JSON.parse(raw)}catch(e){T=null}}
-  tournamentId=getTournamentId();
+function setTournamentId(id) {
+  tournamentId = id;
+  window.location.hash = id;
 }
 
-function startFirebaseSync(){
-  if(!tournamentId||!db) return;
-  const ref=db.ref('tournaments/'+tournamentId);
-  ref.on('value',(snapshot)=>{
-    const data=snapshot.val();
-    if(!data) return;
-    // Skip re-render if we just wrote (echo suppression)
-    if(Date.now()-lastSaveTime<1500) return;
-    T={
-      name:data.meta?.name||T?.name||'Tournoi',
-      teams:data.teams||[],
-      courses:data.courses||[],
-      days:data.days||[],
-      scores:data.scores||{}
-    };
-    localStorage.setItem('golf-tournament',JSON.stringify(T));
-    render();
-  });
-  if(db){
-    db.ref('.info/connected').on('value',(snap)=>{
-      isOnline=snap.val()===true;
-      updateConnectionDot();
+function getAllPlayers() {
+  if (!T || !T.teams) return [];
+  const players = [];
+  T.teams.forEach(team => {
+    (team.players || []).forEach(p => {
+      players.push({ ...p, teamId: team.id, teamName: team.name });
     });
+  });
+  return players;
+}
+
+function getPlayer(pid) {
+  return getAllPlayers().find(p => p.id === pid) || null;
+}
+
+function getTeam(teamId) {
+  return (T.teams || []).find(t => t.id === teamId) || null;
+}
+
+function getTeamForPlayer(pid) {
+  if (!T || !T.teams) return null;
+  for (const team of T.teams) {
+    if ((team.players || []).some(p => p.id === pid)) return team;
   }
+  return null;
 }
-function updateConnectionDot(){
-  const el=document.getElementById('conn-indicator');
-  if(el){
-    el.className=isOnline?'conn-dot conn-online':'conn-dot conn-offline';
-    el.title=isOnline?'En ligne':'Hors ligne';
+
+function getCourse(courseId) {
+  return COURSES.find(c => c.id === courseId) || null;
+}
+
+function isAdmin() {
+  return T && currentPlayerId && T.adminId === currentPlayerId;
+}
+
+function canEditPlayer(targetPlayerId) {
+  if (isAdmin()) return true;
+  return currentPlayerId === targetPlayerId;
+}
+
+function isPlayerSigned(dayIndex, playerId) {
+  if (!T || !T.signed) return false;
+  return T.signed[`d${dayIndex}_${playerId}`] === true;
+}
+
+function getCurrentDay() {
+  if (!T) return 0;
+  return T.currentDay || 0;
+}
+
+function getDayGroups(dayIndex) {
+  if (!T || !T.days || !T.days[dayIndex]) return [];
+  return T.days[dayIndex].groups || [];
+}
+
+function getPlayerGroup(dayIndex, playerId) {
+  const groups = getDayGroups(dayIndex);
+  for (let gi = 0; gi < groups.length; gi++) {
+    if (groups[gi] && groups[gi].includes(playerId)) return gi;
   }
+  return 0;
 }
 
-// ========== HANDICAP & SCORING ==========
-function getStrokesReceived(handicap, si){
-  const hcp = Math.max(0, handicap);
-  const fullPasses = Math.floor(hcp/18);
-  const remainder = hcp % 18;
-  return fullPasses + (si <= remainder ? 1 : 0);
+// ========== SCORING CALCULATIONS ==========
+function strokesReceived(handicap, holeSI) {
+  const base = Math.floor(handicap / 18);
+  const extra = (holeSI <= (handicap % 18)) ? 1 : 0;
+  return base + extra;
 }
 
-function getStrokesForHole(handicap, holeData){
-  return getStrokesReceived(handicap, holeData.si);
+function getNetScore(brut, handicap, holeSI) {
+  if (brut == null || brut === '') return null;
+  return brut - strokesReceived(handicap, holeSI);
 }
 
-function netScore(brut, strokesReceived){
-  return brut - strokesReceived;
-}
-
-function stablefordPoints(netScoreVal, par){
-  const diff = netScoreVal - par;
-  if(diff >= 2) return 0;
-  if(diff === 1) return 1;
-  if(diff === 0) return 2;
-  if(diff === -1) return 3;
-  if(diff === -2) return 4;
+function getStablefordPoints(netScore, par) {
+  if (netScore == null) return 0;
+  const diff = netScore - par;
+  if (diff >= 2) return 0;
+  if (diff === 1) return 1;
+  if (diff === 0) return 2;
+  if (diff === -1) return 3;
+  if (diff === -2) return 4;
   return 5; // albatross or better
 }
 
-function scoreToPar(brut, par){return brut - par}
-function scoreClass(brut, par){
-  if(brut===null||brut===undefined) return '';
-  const d=brut-par;
-  if(d<=-2) return 'sc-eagle';
-  if(d===-1) return 'sc-birdie';
-  if(d===0) return 'sc-par';
-  if(d===1) return 'sc-bogey';
+function getScoreClass(brut, par) {
+  if (brut == null) return '';
+  const diff = brut - par;
+  if (diff <= -2) return 'sc-eagle';
+  if (diff === -1) return 'sc-birdie';
+  if (diff === 0) return 'sc-par';
+  if (diff === 1) return 'sc-bogey';
   return 'sc-double';
 }
 
-// ========== DATA HELPERS ==========
-function getPlayer(id){
-  if(!T) return null;
-  for(const team of T.teams){for(const p of team.players){if(p.id===id) return p}}
-  return null;
-}
-function getAllPlayers(){
-  if(!T) return [];
-  const all=[];
-  for(const team of T.teams) for(const p of team.players) all.push(p);
-  return all;
-}
-function getTeamForPlayer(playerId){
-  if(!T) return null;
-  for(const team of T.teams) for(const p of team.players) if(p.id===playerId) return team;
-  return null;
-}
-function getCourse(id){
-  if(!T) return null;
-  return T.courses.find(c=>c.id===id)||null;
-}
-function getScores(dayIndex, playerId){
-  if(!T||!T.scores) return null;
-  const key=`d${dayIndex}_${playerId}`;
-  return T.scores[key]||null;
-}
-function setScore(dayIndex, playerId, holeIndex, value){
-  if(!T.scores) T.scores={};
-  const key=`d${dayIndex}_${playerId}`;
-  if(!T.scores[key]) T.scores[key]=new Array(18).fill(null);
-  T.scores[key][holeIndex]=value;
-  saveScore(dayIndex, playerId);
-}
-function getHoleScore(dayIndex, playerId, holeIndex){
-  const s=getScores(dayIndex,playerId);
-  return s?s[holeIndex]:null;
-}
-function getThru(dayIndex, playerId){
-  const s=getScores(dayIndex,playerId);
-  if(!s) return 0;
-  let thru=0;
-  for(let i=0;i<18;i++){if(s[i]!==null) thru=i+1; else break}
-  return thru;
-}
-function getFirstNullHole(dayIndex, groupPlayerIds){
-  for(let h=0;h<18;h++){
-    for(const pid of groupPlayerIds){
-      if(getHoleScore(dayIndex,pid,h)===null) return h;
-    }
+function getPlayerScores(dayIndex, playerId) {
+  if (!T || !T.scores) return new Array(18).fill(null);
+  const key = `d${dayIndex}_${playerId}`;
+  const raw = T.scores[key];
+  if (!raw) return new Array(18).fill(null);
+  // Ensure array of 18
+  const arr = [];
+  for (let i = 0; i < 18; i++) {
+    arr.push(raw[i] != null ? Number(raw[i]) : null);
   }
-  return 17;
-}
-function hasTeams(){return T && T.teams.length>1 || (T && T.teams.length===1 && T.teams[0].name !== 'Individuels')}
-
-// ========== LEADERBOARD COMPUTATION ==========
-function computePlayerRound(dayIndex, playerId){
-  const day=T.days[dayIndex];
-  if(!day) return null;
-  const course=getCourse(day.courseId);
-  if(!course) return null;
-  const player=getPlayer(playerId);
-  if(!player) return null;
-  const scores=getScores(dayIndex,playerId);
-  let brut=0, net=0, points=0, thru=0, brutTotal=0, netTotal=0;
-  const holeDetails=[];
-  for(let i=0;i<18;i++){
-    const hole=course.holes[i];
-    const sr=getStrokesForHole(player.handicap,hole);
-    const s=scores?scores[i]:null;
-    let hNet=null, hPts=null;
-    if(s!==null){
-      thru=i+1;
-      brut+=s;
-      const n=s-sr;
-      net+=n;
-      hNet=n;
-      hPts=stablefordPoints(n,hole.par);
-      points+=hPts;
-    }
-    holeDetails.push({brut:s,net:hNet,par:hole.par,si:hole.si,sr,pts:hPts});
-  }
-  const coursePar=course.holes.reduce((a,h)=>a+h.par,0);
-  const brutVsPar=brut-coursePar;
-  const netVsPar=net-coursePar;
-  return {playerId,thru,brut,net,brutVsPar:thru>0?brutVsPar:null,netVsPar:thru>0?netVsPar:null,points,holeDetails,coursePar};
+  return arr;
 }
 
-function computeLeaderboard(dayIndex){
-  const day=T.days[dayIndex];
-  if(!day) return [];
-  const players=getAllPlayers();
-  const results=[];
-  for(const p of players){
-    // Check if player is in this day's groups/matches
-    let inDay=false;
-    if(day.format==='matchplay'){
-      for(const m of (day.matches||[])){if(m.player1===p.id||m.player2===p.id){inDay=true;break}}
-    } else {
-      for(const g of (day.groups||[])){if(g.includes(p.id)){inDay=true;break}}
-    }
-    if(!inDay) continue;
-    const r=computePlayerRound(dayIndex,p.id);
-    if(r) results.push({...r,name:p.name,handicap:p.handicap,teamId:getTeamForPlayer(p.id)?.id});
+function setPlayerScore(dayIndex, playerId, holeIndex, value) {
+  if (!T.scores) T.scores = {};
+  const key = `d${dayIndex}_${playerId}`;
+  if (!T.scores[key]) T.scores[key] = new Array(18).fill(null);
+  T.scores[key][holeIndex] = value;
+}
+
+function calcBrutTotal(scores, start, end) {
+  let sum = 0, complete = true;
+  for (let i = start; i < end; i++) {
+    if (scores[i] != null) sum += scores[i];
+    else complete = false;
   }
-  if(day.format==='stableford'){
-    results.sort((a,b)=>(b.points-a.points)||(a.brut-b.brut));
+  return complete ? sum : (sum > 0 ? sum : null);
+}
+
+function calcStablefordTotal(dayIndex, playerId) {
+  const day = T.days[dayIndex];
+  if (!day) return 0;
+  const course = getCourse(day.courseId);
+  if (!course) return 0;
+  const player = getPlayer(playerId);
+  if (!player) return 0;
+  const scores = getPlayerScores(dayIndex, playerId);
+  let total = 0;
+  for (let i = 0; i < 18; i++) {
+    if (scores[i] != null) {
+      const net = getNetScore(scores[i], player.handicap, course.holes[i].si);
+      total += getStablefordPoints(net, course.holes[i].par);
+    }
+  }
+  return total;
+}
+
+// ========== MATCH PLAY CALCULATIONS ==========
+function calcMatchPlayStatus(dayIndex, match) {
+  if (!match) return { status: 'AS', lead: 0, holesPlayed: 0, finished: false, results: [] };
+  const day = T.days[dayIndex];
+  const course = getCourse(day.courseId);
+  const p1 = getPlayer(match.player1);
+  const p2 = getPlayer(match.player2);
+  if (!course || !p1 || !p2) return { status: 'AS', lead: 0, holesPlayed: 0, finished: false, results: [] };
+
+  const s1 = getPlayerScores(dayIndex, match.player1);
+  const s2 = getPlayerScores(dayIndex, match.player2);
+  let cumulative = 0;
+  let holesPlayed = 0;
+  let finished = false;
+  const results = [];
+
+  for (let i = 0; i < 18; i++) {
+    if (s1[i] == null || s2[i] == null) {
+      results.push('empty');
+      continue;
+    }
+    holesPlayed++;
+    const net1 = getNetScore(s1[i], p1.handicap, course.holes[i].si);
+    const net2 = getNetScore(s2[i], p2.handicap, course.holes[i].si);
+    if (net1 < net2) { cumulative++; results.push('p1'); }
+    else if (net2 < net1) { cumulative--; results.push('p2'); }
+    else { results.push('halved'); }
+
+    const remaining = 18 - (i + 1);
+    if (Math.abs(cumulative) > remaining) {
+      finished = true;
+      break;
+    }
+  }
+
+  // Fill remaining with empty
+  while (results.length < 18) results.push('empty');
+
+  let status;
+  if (cumulative === 0) status = 'AS';
+  else if (finished) {
+    const up = Math.abs(cumulative);
+    const remaining = 18 - holesPlayed;
+    const winner = cumulative > 0 ? p1.name : p2.name;
+    status = `${winner} ${up}&${remaining}`;
   } else {
-    results.sort((a,b)=>{
-      if(a.netVsPar===null&&b.netVsPar===null) return 0;
-      if(a.netVsPar===null) return 1;
-      if(b.netVsPar===null) return -1;
-      return (a.netVsPar-b.netVsPar)||(a.brutVsPar-b.brutVsPar);
-    });
+    const up = Math.abs(cumulative);
+    const leader = cumulative > 0 ? p1.name : p2.name;
+    status = `${leader} ${up} UP`;
   }
-  let pos=1;
-  for(let i=0;i<results.length;i++){
-    if(i>0){
-      const prev=results[i-1];
-      const cur=results[i];
-      if(day.format==='stableford'){
-        if(cur.points===prev.points) cur.pos=prev.pos; else cur.pos=i+1;
-      } else {
-        if(cur.netVsPar===prev.netVsPar) cur.pos=prev.pos; else cur.pos=i+1;
-      }
-    } else {
-      results[i].pos=1;
-    }
-  }
-  return results;
+
+  return { status, lead: cumulative, holesPlayed, finished, results, winner: cumulative > 0 ? match.player1 : (cumulative < 0 ? match.player2 : null) };
 }
 
-function computeOverallLeaderboard(){
-  const players=getAllPlayers();
-  const results=[];
-  for(const p of players){
-    let totalNet=0, totalBrut=0, rounds=0;
-    for(let d=0;d<T.days.length;d++){
-      const day=T.days[d];
-      if(day.format==='matchplay') continue;
-      let inDay=false;
-      for(const g of (day.groups||[])){if(g.includes(p.id)){inDay=true;break}}
-      if(!inDay) continue;
-      const r=computePlayerRound(d,p.id);
-      if(r && r.thru>0){
-        totalNet+=r.netVsPar;
-        totalBrut+=r.brutVsPar;
-        rounds++;
-      }
-    }
-    if(rounds>0){
-      results.push({playerId:p.id,name:p.name,handicap:p.handicap,teamId:getTeamForPlayer(p.id)?.id,netVsPar:totalNet,brutVsPar:totalBrut,rounds});
-    }
-  }
-  results.sort((a,b)=>(a.netVsPar-b.netVsPar)||(a.brutVsPar-b.brutVsPar));
-  for(let i=0;i<results.length;i++){
-    if(i>0&&results[i].netVsPar===results[i-1].netVsPar) results[i].pos=results[i-1].pos;
-    else results[i].pos=i+1;
-  }
-  return results;
-}
+// ========== CHOUETTE CALCULATIONS ==========
+function calcChouetteResults(dayIndex, group) {
+  // group is array of 3 playerIds
+  if (!group || group.length < 3) return null;
+  const day = T.days[dayIndex];
+  const course = getCourse(day.courseId);
+  if (!course) return null;
 
-// ========== MATCH PLAY ==========
-function computeMatchStatus(dayIndex, match){
-  const day=T.days[dayIndex];
-  const course=getCourse(day.courseId);
-  const p1=getPlayer(match.player1);
-  const p2=getPlayer(match.player2);
-  if(!p1||!p2||!course) return {status:'AS',holes:[],finished:false,winner:null};
-  let cumulative=0;
-  const holes=[];
-  let finished=false, winner=null, finishHole=18;
-  for(let i=0;i<18;i++){
-    const hole=course.holes[i];
-    const s1=getHoleScore(dayIndex,p1.id,i);
-    const s2=getHoleScore(dayIndex,p2.id,i);
-    if(s1===null||s2===null){holes.push('empty');continue}
-    const sr1=getStrokesForHole(p1.handicap,hole);
-    const sr2=getStrokesForHole(p2.handicap,hole);
-    const net1=s1-sr1;
-    const net2=s2-sr2;
-    if(net1<net2){cumulative++;holes.push('won')}
-    else if(net1>net2){cumulative--;holes.push('lost')}
-    else{holes.push('halved')}
-    const remaining=17-i;
-    if(Math.abs(cumulative)>remaining&&!finished){
-      finished=true;
-      winner=cumulative>0?p1.id:p2.id;
-      finishHole=i+1;
-    }
-  }
-  let statusText='AS';
-  if(finished){
-    const lead=Math.abs(cumulative);
-    const holesLeft=18-finishHole;
-    statusText=`${lead} & ${holesLeft}`;
-  } else if(cumulative>0){
-    statusText=`${cumulative} UP`;
-  } else if(cumulative<0){
-    statusText=`${Math.abs(cumulative)} UP`;
-  }
-  return {status:statusText,cumulative,holes,finished,winner,finishHole,p1Name:p1.name,p2Name:p2.name,p1Id:p1.id,p2Id:p2.id};
-}
+  const players = group.map(pid => getPlayer(pid)).filter(Boolean);
+  if (players.length < 3) return null;
 
-// ========== FORMAT HELPERS ==========
-function fmtVsPar(v){
-  if(v===null||v===undefined) return '-';
-  if(v===0) return 'E';
-  return v>0?`+${v}`:`${v}`;
-}
-function fmtVsParClass(v){
-  if(v===null||v===undefined) return '';
-  if(v<0) return 'text-green';
-  if(v>0) return 'text-red';
-  return '';
-}
-function esc(s){const d=document.createElement('div');d.textContent=s;return d.innerHTML}
-
-// ========== RENDER MAIN APP ==========
-function render(){
-  if(!T){showWizard();return}
-  document.getElementById('bottom-nav').classList.remove('hidden');
-  const c=document.getElementById('app-content');
-  switch(currentTab){
-    case 'leaderboard': renderLeaderboard(c); break;
-    case 'scores': renderScores(c); break;
-    case 'scorecards': renderScorecards(c); break;
-    case 'matchplay': renderMatchPlay(c); break;
-    case 'config': renderConfig(c); break;
-  }
-}
-
-function switchTab(tab){
-  currentTab=tab;
-  document.querySelectorAll('.bottom-nav button').forEach(b=>{
-    b.classList.toggle('active',b.dataset.tab===tab);
+  // Calculate stableford for each player
+  const stablefords = {};
+  group.forEach(pid => {
+    stablefords[pid] = calcStablefordTotal(dayIndex, pid);
   });
-  render();
+
+  // Rank: highest stableford first
+  const sorted = [...group].sort((a, b) => stablefords[b] - stablefords[a]);
+
+  return {
+    playerIds: group,
+    stablefords,
+    ranking: sorted,
+    first: sorted[0],
+    second: sorted[1],
+    third: sorted[2]
+  };
 }
 
-// ========== WIZARD ==========
-function showWizard(){
-  document.getElementById('bottom-nav').classList.add('hidden');
-  wizardStep=0;
-  wizardData={name:'',days:2,teamMode:'teams',numTeams:2,teams:[],courses:PRELOADED_COURSES.map(c=>({...c,selected:true})),customCourses:[],dayConfigs:[]};
-  renderWizard();
-}
+// ========== POINTS CALCULATIONS ==========
+function calcDayPoints(dayIndex) {
+  if (!T || !T.days || !T.days[dayIndex]) return {};
+  const day = T.days[dayIndex];
+  const config = day.pointsConfig || {};
+  const points = {}; // playerId -> points
 
-function renderWizard(){
-  const c=document.getElementById('app-content');
-  const steps=['Tournoi','Joueurs','Parcours','Journées'];
-  let html=`<div class="wizard-overlay"><div class="wizard-header"><h2>${steps[wizardStep]}</h2><span class="text-dim">${wizardStep+1}/${steps.length}</span></div>`;
-  html+=`<div class="wizard-progress">`;
-  for(let i=0;i<steps.length;i++){
-    html+=`<div class="step ${i<wizardStep?'done':''} ${i===wizardStep?'current':''}"></div>`;
-  }
-  html+=`</div><div class="wizard-body fade-in">`;
+  if (day.format === 'stableford') {
+    const allPlayers = getAllPlayers();
+    const scores = allPlayers.map(p => ({
+      id: p.id,
+      stableford: calcStablefordTotal(dayIndex, p.id)
+    })).sort((a, b) => b.stableford - a.stableford);
 
-  if(wizardStep===0){
-    html+=`<div class="form-group"><label>Nom du tournoi</label><input id="w-name" value="${esc(wizardData.name)}" placeholder="Ex: Carnac Major 2026"></div>`;
-    html+=`<div class="form-group"><label>Nombre de jours</label><select id="w-days">`;
-    for(let i=1;i<=5;i++) html+=`<option value="${i}" ${wizardData.days===i?'selected':''}>${i} jour${i>1?'s':''}</option>`;
-    html+=`</select></div>`;
-  } else if(wizardStep===1){
-    html+=`<div class="form-group"><label>Mode</label><select id="w-teammode" onchange="wizardData.teamMode=this.value;renderWizard()">
-      <option value="teams" ${wizardData.teamMode==='teams'?'selected':''}>Par équipes</option>
-      <option value="individual" ${wizardData.teamMode==='individual'?'selected':''}>Individuel</option>
-    </select></div>`;
-    if(wizardData.teamMode==='teams'){
-      html+=`<div class="form-group"><label>Nombre d'équipes</label><select id="w-numteams" onchange="wizardChangeNumTeams(+this.value)">`;
-      for(let i=2;i<=4;i++) html+=`<option value="${i}" ${wizardData.numTeams===i?'selected':''}>${i}</option>`;
-      html+=`</select></div>`;
-      if(wizardData.teams.length===0) wizardInitTeams();
-      for(let t=0;t<wizardData.teams.length;t++){
-        const team=wizardData.teams[t];
-        html+=`<div class="card"><div class="form-group"><label>Nom de l'équipe ${t+1}</label><input value="${esc(team.name)}" onchange="wizardData.teams[${t}].name=this.value"></div>`;
-        html+=`<div class="section-title">Joueurs</div>`;
-        for(let p=0;p<team.players.length;p++){
-          const pl=team.players[p];
-          html+=`<div class="player-item">
-            <input class="pname" style="flex:1;min-width:0" value="${esc(pl.name)}" placeholder="Nom" onchange="wizardData.teams[${t}].players[${p}].name=this.value">
-            <input class="phcp" style="width:60px" type="number" value="${pl.handicap}" min="0" max="54" onchange="wizardData.teams[${t}].players[${p}].handicap=+this.value">
-            <button class="remove-btn" onclick="wizardRemovePlayer(${t},${p})">×</button>
-          </div>`;
-        }
-        const totalPlayers=wizardData.teams.reduce((s,tt)=>s+tt.players.length,0);
-        if(totalPlayers<8) html+=`<button class="btn btn-secondary btn-sm mt-8" onclick="wizardAddPlayer(${t})">+ Joueur</button>`;
-        html+=`</div>`;
-      }
-    } else {
-      if(wizardData.teams.length===0||wizardData.teamMode==='individual'){
-        if(wizardData.teams.length===0||(wizardData.teams.length>1)||(wizardData.teams.length===1&&wizardData.teams[0].name!=='Individuels')){
-          const allP=[];
-          for(const tt of wizardData.teams) for(const pp of tt.players) allP.push(pp);
-          wizardData.teams=[{name:'Individuels',players:allP.length>0?allP:[{name:'',handicap:18,id:uid()}]}];
+    const posPoints = config.positions || defaultStablefordPositions(allPlayers.length);
+    scores.forEach((s, idx) => {
+      points[s.id] = posPoints[idx] !== undefined ? posPoints[idx] : 0;
+    });
+  } else if (day.format === 'matchplay') {
+    const winPts = config.win !== undefined ? config.win : 2;
+    const halvePts = config.halve !== undefined ? config.halve : 1;
+    const lossPts = config.loss !== undefined ? config.loss : 0;
+
+    (day.matches || []).forEach(match => {
+      const result = calcMatchPlayStatus(dayIndex, match);
+      if (result.finished || result.holesPlayed === 18) {
+        if (result.lead > 0) {
+          points[match.player1] = (points[match.player1] || 0) + winPts;
+          points[match.player2] = (points[match.player2] || 0) + lossPts;
+        } else if (result.lead < 0) {
+          points[match.player2] = (points[match.player2] || 0) + winPts;
+          points[match.player1] = (points[match.player1] || 0) + lossPts;
+        } else {
+          points[match.player1] = (points[match.player1] || 0) + halvePts;
+          points[match.player2] = (points[match.player2] || 0) + halvePts;
         }
       }
-      const team=wizardData.teams[0];
-      for(let p=0;p<team.players.length;p++){
-        const pl=team.players[p];
-        html+=`<div class="player-item">
-          <input class="pname" style="flex:1;min-width:0" value="${esc(pl.name)}" placeholder="Nom du joueur" onchange="wizardData.teams[0].players[${p}].name=this.value">
-          <input class="phcp" style="width:60px" type="number" value="${pl.handicap}" min="0" max="54" onchange="wizardData.teams[0].players[${p}].handicap=+this.value">
-          <button class="remove-btn" onclick="wizardRemovePlayer(0,${p})">×</button>
-        </div>`;
+    });
+  } else if (day.format === 'chouette') {
+    const pts1 = config.first !== undefined ? config.first : 4;
+    const pts2 = config.second !== undefined ? config.second : 2;
+    const pts3 = config.third !== undefined ? config.third : 0;
+
+    (day.groups || []).forEach(group => {
+      const result = calcChouetteResults(dayIndex, group);
+      if (result) {
+        points[result.first] = (points[result.first] || 0) + pts1;
+        points[result.second] = (points[result.second] || 0) + pts2;
+        points[result.third] = (points[result.third] || 0) + pts3;
       }
-      if(team.players.length<8) html+=`<button class="btn btn-secondary btn-sm mt-8" onclick="wizardAddPlayer(0)">+ Joueur</button>`;
-    }
-  } else if(wizardStep===2){
-    html+=`<div class="section-title">Parcours pré-chargés</div>`;
-    for(let i=0;i<wizardData.courses.length;i++){
-      const c=wizardData.courses[i];
-      html+=`<div class="config-item" onclick="wizardData.courses[${i}].selected=!wizardData.courses[${i}].selected;renderWizard()" style="cursor:pointer">
-        <span class="ci-label">${esc(c.name)}</span>
-        <span style="font-size:20px">${c.selected?'✓':''}</span>
-      </div>`;
-    }
-    html+=`<div class="divider"></div><div class="section-title">Parcours personnalisés</div>`;
-    for(let i=0;i<wizardData.customCourses.length;i++){
-      const cc=wizardData.customCourses[i];
-      html+=`<div class="card"><div class="form-row"><div class="form-group"><label>Nom</label><input value="${esc(cc.name)}" onchange="wizardData.customCourses[${i}].name=this.value"></div></div>`;
-      html+=`<div class="section-title mt-8">Pars & SI par trou</div>`;
-      html+=`<div style="overflow-x:auto"><table class="scorecard"><tr><th></th>`;
-      for(let h=1;h<=18;h++) html+=`<th>${h}</th>`;
-      html+=`</tr><tr><td class="row-label">Par</td>`;
-      for(let h=0;h<18;h++) html+=`<td><input type="number" style="width:36px;padding:4px;text-align:center;font-size:12px" value="${cc.holes[h].par}" min="3" max="6" onchange="wizardData.customCourses[${i}].holes[${h}].par=+this.value"></td>`;
-      html+=`</tr><tr><td class="row-label">SI</td>`;
-      for(let h=0;h<18;h++) html+=`<td><input type="number" style="width:36px;padding:4px;text-align:center;font-size:12px" value="${cc.holes[h].si}" min="1" max="18" onchange="wizardData.customCourses[${i}].holes[${h}].si=+this.value"></td>`;
-      html+=`</tr></table></div>`;
-      html+=`<button class="btn btn-danger btn-sm mt-8" onclick="wizardData.customCourses.splice(${i},1);renderWizard()">Supprimer</button></div>`;
-    }
-    html+=`<button class="btn btn-secondary btn-block mt-8" onclick="wizardAddCourse()">+ Parcours personnalisé</button>`;
-  } else if(wizardStep===3){
-    const allCourses=wizardData.courses.filter(c=>c.selected).concat(wizardData.customCourses.filter(c=>c.name));
-    if(wizardData.dayConfigs.length===0) wizardInitDays();
-    const allPlayers=[];
-    for(const tt of wizardData.teams) for(const pp of tt.players) if(pp.name) allPlayers.push(pp);
-    for(let d=0;d<wizardData.dayConfigs.length;d++){
-      const dc=wizardData.dayConfigs[d];
-      html+=`<div class="card"><div class="section-title">Jour ${d+1}</div>`;
-      html+=`<div class="form-group"><label>Parcours</label><select onchange="wizardData.dayConfigs[${d}].courseId=this.value">`;
-      for(const co of allCourses) html+=`<option value="${co.id}" ${dc.courseId===co.id?'selected':''}>${esc(co.name)}</option>`;
-      html+=`</select></div>`;
-      html+=`<div class="form-group"><label>Format</label><select onchange="wizardData.dayConfigs[${d}].format=this.value;renderWizard()">
-        <option value="strokeplay" ${dc.format==='strokeplay'?'selected':''}>Stroke Play</option>
-        <option value="stableford" ${dc.format==='stableford'?'selected':''}>Stableford</option>
-        <option value="matchplay" ${dc.format==='matchplay'?'selected':''}>Match Play</option>
-      </select></div>`;
-
-      if(dc.format==='matchplay'){
-        html+=`<div class="section-title">Matchs</div>`;
-        if(!dc.matches) dc.matches=[];
-        for(let m=0;m<dc.matches.length;m++){
-          const ma=dc.matches[m];
-          html+=`<div class="form-row mb-8"><div class="form-group"><select onchange="wizardData.dayConfigs[${d}].matches[${m}].player1=this.value">
-            <option value="">-- Joueur 1 --</option>`;
-          for(const pp of allPlayers) html+=`<option value="${pp.id}" ${ma.player1===pp.id?'selected':''}>${esc(pp.name)}</option>`;
-          html+=`</select></div><div style="display:flex;align-items:center;justify-content:center;width:30px;color:var(--text-dim)">vs</div><div class="form-group"><select onchange="wizardData.dayConfigs[${d}].matches[${m}].player2=this.value">
-            <option value="">-- Joueur 2 --</option>`;
-          for(const pp of allPlayers) html+=`<option value="${pp.id}" ${ma.player2===pp.id?'selected':''}>${esc(pp.name)}</option>`;
-          html+=`</select></div><button class="remove-btn" onclick="wizardData.dayConfigs[${d}].matches.splice(${m},1);renderWizard()">×</button></div>`;
-        }
-        html+=`<button class="btn btn-secondary btn-sm" onclick="wizardData.dayConfigs[${d}].matches.push({player1:'',player2:''});renderWizard()">+ Match</button>`;
-      } else {
-        html+=`<div class="section-title">Groupes</div>`;
-        if(!dc.groups) dc.groups=[];
-        for(let g=0;g<dc.groups.length;g++){
-          const gr=dc.groups[g];
-          html+=`<div class="card" style="background:var(--card-light)"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><span style="font-weight:600;font-size:13px">Groupe ${g+1}</span><button class="remove-btn" style="width:24px;height:24px;font-size:14px" onclick="wizardData.dayConfigs[${d}].groups.splice(${g},1);renderWizard()">×</button></div>`;
-          for(let pi=0;pi<gr.length;pi++){
-            html+=`<div class="form-group"><select onchange="wizardData.dayConfigs[${d}].groups[${g}][${pi}]=this.value">
-              <option value="">-- Joueur --</option>`;
-            for(const pp of allPlayers) html+=`<option value="${pp.id}" ${gr[pi]===pp.id?'selected':''}>${esc(pp.name)}</option>`;
-            html+=`</select></div>`;
-          }
-          html+=`<button class="btn btn-secondary btn-sm" onclick="wizardData.dayConfigs[${d}].groups[${g}].push('');renderWizard()">+ Joueur au groupe</button>`;
-          html+=`</div>`;
-        }
-        html+=`<button class="btn btn-secondary btn-sm" onclick="wizardData.dayConfigs[${d}].groups.push(['']);renderWizard()">+ Groupe</button>`;
-      }
-      html+=`</div>`;
-    }
-  }
-
-  html+=`</div><div class="wizard-footer">`;
-  if(wizardStep>0) html+=`<button class="btn btn-secondary" onclick="wizardPrev()">Précédent</button>`;
-  if(wizardStep<3) html+=`<button class="btn btn-primary" onclick="wizardNext()">Suivant</button>`;
-  else html+=`<button class="btn btn-primary" onclick="wizardFinish()">Créer le tournoi</button>`;
-  html+=`</div></div>`;
-  c.innerHTML=html;
-}
-
-function wizardInitTeams(){
-  wizardData.teams=[];
-  for(let i=0;i<wizardData.numTeams;i++){
-    wizardData.teams.push({name:`Équipe ${i+1}`,players:[{name:'',handicap:18,id:uid()}]});
-  }
-}
-function wizardChangeNumTeams(n){
-  wizardData.numTeams=n;
-  while(wizardData.teams.length<n) wizardData.teams.push({name:`Équipe ${wizardData.teams.length+1}`,players:[{name:'',handicap:18,id:uid()}]});
-  while(wizardData.teams.length>n) wizardData.teams.pop();
-  renderWizard();
-}
-function wizardAddPlayer(teamIdx){
-  const total=wizardData.teams.reduce((s,t)=>s+t.players.length,0);
-  if(total>=8) return;
-  wizardData.teams[teamIdx].players.push({name:'',handicap:18,id:uid()});
-  renderWizard();
-}
-function wizardRemovePlayer(teamIdx,playerIdx){
-  if(wizardData.teams[teamIdx].players.length<=1) return;
-  wizardData.teams[teamIdx].players.splice(playerIdx,1);
-  renderWizard();
-}
-function wizardAddCourse(){
-  const holes=[];
-  for(let i=1;i<=18;i++) holes.push({num:i,par:4,si:i});
-  wizardData.customCourses.push({id:uid(),name:'',par:72,holes});
-  renderWizard();
-}
-function wizardInitDays(){
-  const allCourses=wizardData.courses.filter(c=>c.selected).concat(wizardData.customCourses.filter(c=>c.name));
-  const nDays=wizardData.days||1;
-  wizardData.dayConfigs=[];
-  for(let i=0;i<nDays;i++){
-    wizardData.dayConfigs.push({
-      courseId:allCourses.length>0?allCourses[i%allCourses.length].id:'',
-      format:'strokeplay',
-      groups:[],
-      matches:[]
     });
   }
+
+  return points;
 }
-function wizardPrev(){
-  if(wizardStep===0) return;
-  wizardStep--;
-  renderWizard();
-}
-function wizardNext(){
-  if(wizardStep===0){
-    const nameEl=document.getElementById('w-name');
-    const daysEl=document.getElementById('w-days');
-    if(nameEl) wizardData.name=nameEl.value;
-    if(daysEl) wizardData.days=+daysEl.value;
+
+function defaultStablefordPositions(numPlayers) {
+  const pts = [];
+  for (let i = 0; i < numPlayers; i++) {
+    pts.push(numPlayers - i);
   }
-  if(wizardStep===2){
-    wizardData.dayConfigs=[];
-    wizardInitDays();
-  }
-  wizardStep++;
-  renderWizard();
+  return pts;
 }
-function wizardFinish(){
-  const allCourses=wizardData.courses.filter(c=>c.selected).map(c=>{const {selected,...rest}=c;return rest}).concat(wizardData.customCourses.filter(c=>c.name).map(c=>{c.par=c.holes.reduce((s,h)=>s+h.par,0);return c}));
-  const teams=wizardData.teams.map((t,i)=>({
-    id:uid(),
-    name:t.name,
-    players:t.players.filter(p=>p.name).map(p=>({id:p.id,name:p.name,handicap:p.handicap}))
-  })).filter(t=>t.players.length>0);
-  const days=wizardData.dayConfigs.map((dc,i)=>{
-    const day={
-      label:`Jour ${i+1}`,
-      courseId:dc.courseId,
-      format:dc.format,
-      groups:dc.format!=='matchplay'?(dc.groups||[]).map(g=>g.filter(id=>id)):[],
-      matches:dc.format==='matchplay'?(dc.matches||[]).filter(m=>m.player1&&m.player2):[]
-    };
-    return day;
+
+function calcTeamTotals() {
+  if (!T || !T.teams) return [];
+  const teamPoints = {};
+  T.teams.forEach(team => {
+    teamPoints[team.id] = { team, rounds: [], total: 0 };
   });
-  T={
-    name:wizardData.name||'Tournoi',
-    teams,
-    courses:allCourses,
-    days,
-    scores:{}
-  };
-  const newId=generateTournamentId();
-  setTournamentId(newId);
-  save();
-  startFirebaseSync();
-  currentTab='leaderboard';
-  switchTab('leaderboard');
+
+  (T.days || []).forEach((day, di) => {
+    const dayPts = calcDayPoints(di);
+    T.teams.forEach(team => {
+      let roundTotal = 0;
+      (team.players || []).forEach(p => {
+        roundTotal += dayPts[p.id] || 0;
+      });
+      teamPoints[team.id].rounds.push(roundTotal);
+      teamPoints[team.id].total += roundTotal;
+    });
+  });
+
+  return Object.values(teamPoints).sort((a, b) => b.total - a.total);
 }
 
-// ========== TAB: LEADERBOARD ==========
-let lbSelectedDay='general';
-
-function renderLeaderboard(container){
-  let html=`<div class="page-title">${esc(T.name)} - Classement</div>`;
-  // Round selector
-  html+=`<div class="chip-row mb-12">`;
-  for(let d=0;d<T.days.length;d++){
-    html+=`<button class="chip ${lbSelectedDay===d?'active':''}" onclick="lbSelectedDay=${d};render()">${esc(T.days[d].label)}</button>`;
-  }
-  html+=`<button class="chip ${lbSelectedDay==='general'?'active':''}" onclick="lbSelectedDay='general';render()">Général</button>`;
-  html+=`</div>`;
-
-  if(lbSelectedDay==='general'){
-    html+=renderOverallLeaderboard();
-  } else {
-    const day=T.days[lbSelectedDay];
-    if(day.format==='matchplay'){
-      html+=renderMatchPlayLeaderboard(lbSelectedDay);
-    } else if(day.format==='stableford'){
-      html+=renderStablefordLeaderboard(lbSelectedDay);
-    } else {
-      html+=renderStrokeLeaderboard(lbSelectedDay);
-    }
-  }
-  container.innerHTML=html;
+function calcPlayerTotals() {
+  if (!T) return [];
+  const players = getAllPlayers();
+  const result = players.map(p => {
+    const roundPts = [];
+    const roundBrut = [];
+    let totalPts = 0;
+    (T.days || []).forEach((day, di) => {
+      const dayPts = calcDayPoints(di);
+      const pts = dayPts[p.id] || 0;
+      roundPts.push(pts);
+      totalPts += pts;
+      const scores = getPlayerScores(di, p.id);
+      const brut = calcBrutTotal(scores, 0, 18);
+      roundBrut.push(brut);
+    });
+    return { player: p, roundPts, roundBrut, totalPts };
+  });
+  return result.sort((a, b) => b.totalPts - a.totalPts);
 }
 
-function renderStrokeLeaderboard(dayIndex){
-  const lb=computeLeaderboard(dayIndex);
-  if(lb.length===0) return `<div class="card text-center text-dim">Aucun joueur pour cette journée</div>`;
-  let html=`<table class="lb-table"><tr><th>Pos</th><th>Joueur</th><th>Trou</th><th>Brut</th><th>Net</th></tr>`;
-  const teams=hasTeams()?T.teams:[];
-  if(teams.length>1){
-    // Group by team
-    for(const team of teams){
-      const teamPlayers=lb.filter(r=>r.teamId===team.id);
-      if(teamPlayers.length===0) continue;
-      const teamNet=teamPlayers.reduce((s,p)=>s+(p.netVsPar||0),0);
-      html+=`<tr class="team-row"><td></td><td colspan="2">${esc(team.name)}</td><td></td><td class="${fmtVsParClass(teamNet)}">${fmtVsPar(teamNet)}</td></tr>`;
-      for(const r of teamPlayers){
-        html+=`<tr class="clickable" onclick="showPlayerCard('${r.playerId}',${dayIndex})"><td class="pos">${r.pos}</td><td>${esc(r.name)}</td><td>${r.thru||'-'}</td><td class="${fmtVsParClass(r.brutVsPar)}">${fmtVsPar(r.brutVsPar)}</td><td class="${fmtVsParClass(r.netVsPar)}">${fmtVsPar(r.netVsPar)}</td></tr>`;
-      }
-    }
-  } else {
-    for(const r of lb){
-      html+=`<tr class="clickable" onclick="showPlayerCard('${r.playerId}',${dayIndex})"><td class="pos">${r.pos}</td><td>${esc(r.name)}</td><td>${r.thru||'-'}</td><td class="${fmtVsParClass(r.brutVsPar)}">${fmtVsPar(r.brutVsPar)}</td><td class="${fmtVsParClass(r.netVsPar)}">${fmtVsPar(r.netVsPar)}</td></tr>`;
-    }
-  }
-  html+=`</table>`;
-  return html;
+// ========== FIREBASE PERSISTENCE ==========
+function save() {
+  if (!T || !tournamentId || !db) return;
+  lastSaveTime = Date.now();
+  db.ref('tournaments/' + tournamentId).set(T)
+    .catch(err => console.warn('Firebase write failed:', err));
 }
 
-function renderStablefordLeaderboard(dayIndex){
-  const lb=computeLeaderboard(dayIndex);
-  if(lb.length===0) return `<div class="card text-center text-dim">Aucun joueur pour cette journée</div>`;
-  let html=`<table class="lb-table"><tr><th>Pos</th><th>Joueur</th><th>Trou</th><th>Points</th></tr>`;
-  const teams=hasTeams()?T.teams:[];
-  if(teams.length>1){
-    for(const team of teams){
-      const teamPlayers=lb.filter(r=>r.teamId===team.id);
-      if(teamPlayers.length===0) continue;
-      const teamPts=teamPlayers.reduce((s,p)=>s+p.points,0);
-      html+=`<tr class="team-row"><td></td><td colspan="2">${esc(team.name)}</td><td class="text-gold">${teamPts}</td></tr>`;
-      for(const r of teamPlayers){
-        html+=`<tr class="clickable" onclick="showPlayerCard('${r.playerId}',${dayIndex})"><td class="pos">${r.pos}</td><td>${esc(r.name)}</td><td>${r.thru||'-'}</td><td class="text-gold">${r.points}</td></tr>`;
-      }
-    }
-  } else {
-    for(const r of lb){
-      html+=`<tr class="clickable" onclick="showPlayerCard('${r.playerId}',${dayIndex})"><td class="pos">${r.pos}</td><td>${esc(r.name)}</td><td>${r.thru||'-'}</td><td class="text-gold">${r.points}</td></tr>`;
-    }
-  }
-  html+=`</table>`;
-  return html;
+function saveScoreOnly(dayIndex, playerId) {
+  if (!T || !tournamentId || !db) return;
+  lastSaveTime = Date.now();
+  const key = `d${dayIndex}_${playerId}`;
+  db.ref(`tournaments/${tournamentId}/scores/${key}`).set(T.scores[key])
+    .catch(err => console.warn('Firebase score write failed:', err));
 }
 
-function renderMatchPlayLeaderboard(dayIndex){
-  const day=T.days[dayIndex];
-  if(!day.matches||day.matches.length===0) return `<div class="card text-center text-dim">Aucun match configuré</div>`;
-  let html='';
-  const teams=hasTeams()?T.teams:[];
-  const teamScores={};
-  for(const m of day.matches){
-    const ms=computeMatchStatus(dayIndex,m);
-    html+=`<div class="match-card">`;
-    html+=`<div class="match-players"><div class="match-player${ms.winner===ms.p1Id?' text-gold':''}">${esc(ms.p1Name)}</div><div class="match-vs">vs</div><div class="match-player${ms.winner===ms.p2Id?' text-gold':''}">${esc(ms.p2Name)}</div></div>`;
-    html+=`<div class="match-status">${ms.cumulative>0?ms.p1Name:ms.cumulative<0?ms.p2Name:''} ${ms.status}</div>`;
-    html+=`<div class="match-holes">`;
-    for(let i=0;i<18;i++){
-      const h=ms.holes[i]||'empty';
-      const cls=h==='won'?'mh-won':h==='lost'?'mh-lost':h==='halved'?'mh-halved':'mh-empty';
-      html+=`<div class="match-hole ${cls}">${i+1}</div>`;
-    }
-    html+=`</div></div>`;
-    // Team scoring
-    if(teams.length>1){
-      const t1=getTeamForPlayer(m.player1);
-      const t2=getTeamForPlayer(m.player2);
-      if(ms.finished){
-        if(t1&&ms.winner===m.player1){teamScores[t1.id]=(teamScores[t1.id]||0)+1}
-        if(t2&&ms.winner===m.player2){teamScores[t2.id]=(teamScores[t2.id]||0)+1}
-      }
-    }
-  }
-  if(teams.length>1){
-    html+=`<div class="card"><div class="section-title">Score par équipe</div>`;
-    for(const team of teams){
-      html+=`<div style="display:flex;justify-content:space-between;padding:6px 0"><span>${esc(team.name)}</span><span class="text-gold" style="font-weight:700">${teamScores[team.id]||0} pts</span></div>`;
-    }
-    html+=`</div>`;
-  }
-  return html;
+function saveSigned() {
+  if (!T || !tournamentId || !db) return;
+  lastSaveTime = Date.now();
+  db.ref(`tournaments/${tournamentId}/signed`).set(T.signed || {})
+    .catch(err => console.warn('Firebase signed write failed:', err));
+  db.ref(`tournaments/${tournamentId}/currentDay`).set(T.currentDay || 0)
+    .catch(err => console.warn('Firebase currentDay write failed:', err));
 }
 
-function renderOverallLeaderboard(){
-  const lb=computeOverallLeaderboard();
-  if(lb.length===0) return `<div class="card text-center text-dim">Aucun score enregistré</div>`;
-  let html=`<table class="lb-table"><tr><th>Pos</th><th>Joueur</th><th>Rounds</th><th>Net</th></tr>`;
-  const teams=hasTeams()?T.teams:[];
-  if(teams.length>1){
-    for(const team of teams){
-      const teamPlayers=lb.filter(r=>r.teamId===team.id);
-      if(teamPlayers.length===0) continue;
-      const teamNet=teamPlayers.reduce((s,p)=>s+p.netVsPar,0);
-      html+=`<tr class="team-row"><td></td><td colspan="2">${esc(team.name)}</td><td class="${fmtVsParClass(teamNet)}">${fmtVsPar(teamNet)}</td></tr>`;
-      for(const r of teamPlayers){
-        html+=`<tr><td class="pos">${r.pos}</td><td>${esc(r.name)}</td><td>${r.rounds}</td><td class="${fmtVsParClass(r.netVsPar)}">${fmtVsPar(r.netVsPar)}</td></tr>`;
-      }
-    }
-  } else {
-    for(const r of lb){
-      html+=`<tr><td class="pos">${r.pos}</td><td>${esc(r.name)}</td><td>${r.rounds}</td><td class="${fmtVsParClass(r.netVsPar)}">${fmtVsPar(r.netVsPar)}</td></tr>`;
-    }
-  }
-  html+=`</table>`;
-  return html;
+function startFirebaseSync() {
+  if (!tournamentId || !db) return;
+  const ref = db.ref('tournaments/' + tournamentId);
+  ref.on('value', (snapshot) => {
+    const data = snapshot.val();
+    if (!data) return;
+    if (Date.now() - lastSaveTime < 2000) return;
+    T = data;
+    render();
+  });
+  db.ref('.info/connected').on('value', (snap) => {
+    isOnline = snap.val() === true;
+    updateConnectionDot();
+  });
 }
 
-function showPlayerCard(playerId, dayIndex){
-  scSelectedPlayer=playerId;
-  scSelectedDay=dayIndex;
-  currentTab='scorecards';
-  switchTab('scorecards');
-}
-
-// ========== TAB: SCORES ==========
-let seSelectedDay=0;
-let seSelectedGroup=0;
-let seCurrentHole=0;
-
-function renderScores(container){
-  if(T.days.length===0){container.innerHTML='<div class="card text-center text-dim">Aucune journée configurée</div>';return}
-  if(seSelectedDay>=T.days.length) seSelectedDay=0;
-  const day=T.days[seSelectedDay];
-  const course=getCourse(day.courseId);
-
-  let html=`<div class="page-title">Saisie des scores</div>`;
-  // Day selector
-  html+=`<div class="chip-row mb-8">`;
-  for(let d=0;d<T.days.length;d++){
-    html+=`<button class="chip ${seSelectedDay===d?'active':''}" onclick="seSelectedDay=${d};seSelectedGroup=0;seCurrentHole=0;render()">${esc(T.days[d].label)}</button>`;
-  }
-  html+=`</div>`;
-
-  // Group/match selector
-  let groupPlayers=[];
-  if(day.format==='matchplay'){
-    if(!day.matches||day.matches.length===0){container.innerHTML=html+`<div class="card text-center text-dim">Aucun match configuré</div>`;return}
-    if(seSelectedGroup>=day.matches.length) seSelectedGroup=0;
-    html+=`<div class="chip-row mb-12">`;
-    for(let g=0;g<day.matches.length;g++){
-      const m=day.matches[g];
-      const p1=getPlayer(m.player1);
-      const p2=getPlayer(m.player2);
-      html+=`<button class="chip ${seSelectedGroup===g?'active':''}" onclick="seSelectedGroup=${g};seAutoHole();render()">${p1?esc(p1.name):'?'} vs ${p2?esc(p2.name):'?'}</button>`;
-    }
-    html+=`</div>`;
-    const m=day.matches[seSelectedGroup];
-    groupPlayers=[m.player1,m.player2].filter(Boolean);
-  } else {
-    if(!day.groups||day.groups.length===0){container.innerHTML=html+`<div class="card text-center text-dim">Aucun groupe configuré</div>`;return}
-    if(seSelectedGroup>=day.groups.length) seSelectedGroup=0;
-    html+=`<div class="chip-row mb-12">`;
-    for(let g=0;g<day.groups.length;g++){
-      const names=day.groups[g].map(id=>{const p=getPlayer(id);return p?p.name:'?'}).join(', ');
-      html+=`<button class="chip ${seSelectedGroup===g?'active':''}" onclick="seSelectedGroup=${g};seAutoHole();render()">Gr.${g+1}</button>`;
-    }
-    html+=`</div>`;
-    groupPlayers=day.groups[seSelectedGroup].filter(Boolean);
-  }
-
-  if(!course||groupPlayers.length===0){container.innerHTML=html+`<div class="card text-center text-dim">Configuration incomplète</div>`;return}
-
-  // Auto detect hole
-  if(seCurrentHole<0) seCurrentHole=0;
-  if(seCurrentHole>17) seCurrentHole=17;
-
-  const hole=course.holes[seCurrentHole];
-
-  html+=`<div class="card">`;
-  html+=`<div class="hole-header"><div class="hole-num">Trou ${hole.num}</div><div class="hole-info">Par ${hole.par} &middot; SI ${hole.si}</div></div>`;
-
-  for(const pid of groupPlayers){
-    const player=getPlayer(pid);
-    if(!player) continue;
-    const sr=getStrokesForHole(player.handicap,hole);
-    const currentScore=getHoleScore(seSelectedDay,pid,seCurrentHole);
-    html+=`<div class="score-player"><div class="sp-name">${esc(player.name)} <span class="text-dim" style="font-size:12px">(hcp ${player.handicap})</span></div>`;
-    html+=`<div class="sp-strokes">Coups reçus : ${sr}</div>`;
-    html+=`<div class="score-grid">`;
-    for(let s=1;s<=10;s++){
-      const isPar=s===hole.par;
-      const isSel=currentScore===s;
-      html+=`<button class="score-btn${isSel?' selected':''}${isPar?' par-btn':''}" onclick="enterScore('${pid}',${seCurrentHole},${s})">${s}</button>`;
-    }
-    html+=`</div></div>`;
-  }
-
-  html+=`<div class="hole-nav">`;
-  html+=`<button class="btn btn-secondary" ${seCurrentHole===0?'disabled style="opacity:.4"':''} onclick="seCurrentHole--;render()">← Préc.</button>`;
-  html+=`<button class="btn btn-secondary" ${seCurrentHole===17?'disabled style="opacity:.4"':''} onclick="seCurrentHole++;render()">Suiv. →</button>`;
-  html+=`</div>`;
-
-  // Hole dots
-  html+=`<div style="display:flex;gap:4px;justify-content:center;margin-top:12px;flex-wrap:wrap">`;
-  for(let h=0;h<18;h++){
-    const allFilled=groupPlayers.every(pid=>getHoleScore(seSelectedDay,pid,h)!==null);
-    const isCur=h===seCurrentHole;
-    const bg=isCur?'var(--accent)':allFilled?'var(--birdie)':'var(--card-light)';
-    const col=isCur?'#1a1a1a':allFilled?'#fff':'var(--text-dim)';
-    html+=`<button style="width:28px;height:28px;border-radius:50%;background:${bg};color:${col};font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;border:none" onclick="seCurrentHole=${h};render()">${h+1}</button>`;
-  }
-  html+=`</div>`;
-
-  html+=`</div>`;
-  container.innerHTML=html;
-}
-
-function seAutoHole(){
-  const day=T.days[seSelectedDay];
-  let groupPlayers=[];
-  if(day.format==='matchplay'){
-    if(day.matches&&day.matches[seSelectedGroup]){
-      const m=day.matches[seSelectedGroup];
-      groupPlayers=[m.player1,m.player2].filter(Boolean);
-    }
-  } else {
-    if(day.groups&&day.groups[seSelectedGroup]){
-      groupPlayers=day.groups[seSelectedGroup].filter(Boolean);
-    }
-  }
-  if(groupPlayers.length>0){
-    seCurrentHole=getFirstNullHole(seSelectedDay,groupPlayers);
+function updateConnectionDot() {
+  const dot = document.getElementById('conn-indicator');
+  if (dot) {
+    dot.className = 'conn-dot ' + (isOnline ? 'conn-online' : 'conn-offline');
   }
 }
 
-function enterScore(playerId, holeIndex, value){
-  const current=getHoleScore(seSelectedDay,playerId,holeIndex);
-  if(current===value){
-    // Deselect
-    setScore(seSelectedDay,playerId,holeIndex,null);
-  } else {
-    setScore(seSelectedDay,playerId,holeIndex,value);
-  }
-  render();
-}
+// ========== INITIALIZATION ==========
+function init() {
+  currentPlayerId = localStorage.getItem('golf-currentPlayerId') || null;
+  tournamentId = getTournamentId();
 
-// ========== TAB: SCORECARDS ==========
-let scSelectedPlayer='';
-let scSelectedDay=0;
-
-function renderScorecards(container){
-  const players=getAllPlayers();
-  if(players.length===0){container.innerHTML='<div class="card text-center text-dim">Aucun joueur</div>';return}
-  if(!scSelectedPlayer||!getPlayer(scSelectedPlayer)) scSelectedPlayer=players[0].id;
-
-  let html=`<div class="page-title">Cartes de score</div>`;
-  // Player selector
-  html+=`<div class="chip-row mb-8">`;
-  for(const p of players){
-    html+=`<button class="chip ${scSelectedPlayer===p.id?'active':''}" onclick="scSelectedPlayer='${p.id}';render()">${esc(p.name)}</button>`;
-  }
-  html+=`</div>`;
-  // Day selector
-  html+=`<div class="chip-row mb-12">`;
-  for(let d=0;d<T.days.length;d++){
-    html+=`<button class="chip ${scSelectedDay===d?'active':''}" onclick="scSelectedDay=${d};render()">${esc(T.days[d].label)}</button>`;
-  }
-  html+=`</div>`;
-
-  if(scSelectedDay>=T.days.length){container.innerHTML=html;return}
-  const day=T.days[scSelectedDay];
-  const course=getCourse(day.courseId);
-  const player=getPlayer(scSelectedPlayer);
-  if(!course||!player){container.innerHTML=html+`<div class="card text-center text-dim">Données manquantes</div>`;return}
-
-  const r=computePlayerRound(scSelectedDay,scSelectedPlayer);
-  if(!r){container.innerHTML=html;return}
-
-  html+=`<div class="card"><div style="font-weight:700;margin-bottom:4px">${esc(player.name)} <span class="text-dim">(hcp ${player.handicap})</span></div>`;
-  html+=`<div class="text-dim" style="font-size:13px;margin-bottom:12px">${esc(course.name)} &middot; ${esc(day.label)}</div>`;
-  html+=`<div class="scorecard-wrap"><table class="scorecard">`;
-
-  // Header OUT
-  html+=`<tr><th></th>`;
-  for(let i=0;i<9;i++) html+=`<th>${i+1}</th>`;
-  html+=`<th class="total-col">OUT</th>`;
-  for(let i=9;i<18;i++) html+=`<th>${i+1}</th>`;
-  html+=`<th class="total-col">IN</th><th class="total-col">TOT</th></tr>`;
-
-  // Par
-  html+=`<tr><td class="row-label">Par</td>`;
-  let outPar=0,inPar=0;
-  for(let i=0;i<9;i++){outPar+=course.holes[i].par;html+=`<td>${course.holes[i].par}</td>`}
-  html+=`<td class="total-col">${outPar}</td>`;
-  for(let i=9;i<18;i++){inPar+=course.holes[i].par;html+=`<td>${course.holes[i].par}</td>`}
-  html+=`<td class="total-col">${inPar}</td><td class="total-col">${outPar+inPar}</td></tr>`;
-
-  // SI
-  html+=`<tr><td class="row-label">SI</td>`;
-  for(let i=0;i<9;i++) html+=`<td>${course.holes[i].si}</td>`;
-  html+=`<td class="total-col"></td>`;
-  for(let i=9;i<18;i++) html+=`<td>${course.holes[i].si}</td>`;
-  html+=`<td class="total-col"></td><td class="total-col"></td></tr>`;
-
-  // Coups recus
-  html+=`<tr><td class="row-label">C. reçus</td>`;
-  let outSR=0,inSR=0;
-  for(let i=0;i<9;i++){const sr=r.holeDetails[i].sr;outSR+=sr;html+=`<td>${sr}</td>`}
-  html+=`<td class="total-col">${outSR}</td>`;
-  for(let i=9;i<18;i++){const sr=r.holeDetails[i].sr;inSR+=sr;html+=`<td>${sr}</td>`}
-  html+=`<td class="total-col">${inSR}</td><td class="total-col">${outSR+inSR}</td></tr>`;
-
-  // Brut
-  html+=`<tr><td class="row-label">Brut</td>`;
-  let outBrut=0,inBrut=0;
-  for(let i=0;i<9;i++){
-    const d=r.holeDetails[i];
-    const cls=d.brut!==null?scoreClass(d.brut,d.par):'';
-    if(d.brut!==null) outBrut+=d.brut;
-    html+=`<td class="${cls}">${d.brut!==null?d.brut:'-'}</td>`;
-  }
-  html+=`<td class="total-col">${outBrut||'-'}</td>`;
-  for(let i=9;i<18;i++){
-    const d=r.holeDetails[i];
-    const cls=d.brut!==null?scoreClass(d.brut,d.par):'';
-    if(d.brut!==null) inBrut+=d.brut;
-    html+=`<td class="${cls}">${d.brut!==null?d.brut:'-'}</td>`;
-  }
-  html+=`<td class="total-col">${inBrut||'-'}</td><td class="total-col">${(outBrut+inBrut)||'-'}</td></tr>`;
-
-  // Net
-  html+=`<tr><td class="row-label">Net</td>`;
-  let outNet=0,inNet=0;
-  for(let i=0;i<9;i++){
-    const d=r.holeDetails[i];
-    const cls=d.net!==null?scoreClass(d.net,d.par):'';
-    if(d.net!==null) outNet+=d.net;
-    html+=`<td class="${cls}">${d.net!==null?d.net:'-'}</td>`;
-  }
-  html+=`<td class="total-col">${outNet||'-'}</td>`;
-  for(let i=9;i<18;i++){
-    const d=r.holeDetails[i];
-    const cls=d.net!==null?scoreClass(d.net,d.par):'';
-    if(d.net!==null) inNet+=d.net;
-    html+=`<td class="${cls}">${d.net!==null?d.net:'-'}</td>`;
-  }
-  html+=`<td class="total-col">${inNet||'-'}</td><td class="total-col">${(outNet+inNet)||'-'}</td></tr>`;
-
-  // Stableford row if applicable
-  if(day.format==='stableford'){
-    html+=`<tr><td class="row-label">Points</td>`;
-    let outPts=0,inPts=0;
-    for(let i=0;i<9;i++){
-      const d=r.holeDetails[i];
-      if(d.pts!==null) outPts+=d.pts;
-      html+=`<td>${d.pts!==null?d.pts:'-'}</td>`;
-    }
-    html+=`<td class="total-col">${outPts}</td>`;
-    for(let i=9;i<18;i++){
-      const d=r.holeDetails[i];
-      if(d.pts!==null) inPts+=d.pts;
-      html+=`<td>${d.pts!==null?d.pts:'-'}</td>`;
-    }
-    html+=`<td class="total-col">${inPts}</td><td class="total-col">${outPts+inPts}</td></tr>`;
-  }
-
-  html+=`</table></div></div>`;
-
-  // Summary
-  html+=`<div class="card"><div class="form-row">`;
-  html+=`<div class="text-center"><div class="text-dim" style="font-size:12px">Brut</div><div style="font-size:20px;font-weight:700" class="${fmtVsParClass(r.brutVsPar)}">${r.brut} (${fmtVsPar(r.brutVsPar)})</div></div>`;
-  html+=`<div class="text-center"><div class="text-dim" style="font-size:12px">Net</div><div style="font-size:20px;font-weight:700" class="${fmtVsParClass(r.netVsPar)}">${r.net} (${fmtVsPar(r.netVsPar)})</div></div>`;
-  if(day.format==='stableford'){
-    html+=`<div class="text-center"><div class="text-dim" style="font-size:12px">Points</div><div style="font-size:20px;font-weight:700;color:var(--accent)">${r.points}</div></div>`;
-  }
-  html+=`</div></div>`;
-
-  container.innerHTML=html;
-}
-
-// ========== TAB: MATCH PLAY ==========
-let mpSelectedDay=-1;
-
-function renderMatchPlay(container){
-  // Find first match play day
-  if(mpSelectedDay<0||mpSelectedDay>=T.days.length||T.days[mpSelectedDay].format!=='matchplay'){
-    mpSelectedDay=-1;
-    for(let d=0;d<T.days.length;d++){if(T.days[d].format==='matchplay'){mpSelectedDay=d;break}}
-  }
-
-  let html=`<div class="page-title">Match Play</div>`;
-
-  const mpDays=T.days.map((d,i)=>({...d,idx:i})).filter(d=>d.format==='matchplay');
-  if(mpDays.length===0){
-    container.innerHTML=html+`<div class="card text-center text-dim">Aucune journée en match play</div>`;
-    return;
-  }
-
-  html+=`<div class="chip-row mb-12">`;
-  for(const d of mpDays){
-    html+=`<button class="chip ${mpSelectedDay===d.idx?'active':''}" onclick="mpSelectedDay=${d.idx};render()">${esc(d.label)}</button>`;
-  }
-  html+=`</div>`;
-
-  const day=T.days[mpSelectedDay];
-  if(!day||!day.matches||day.matches.length===0){
-    container.innerHTML=html+`<div class="card text-center text-dim">Aucun match configuré</div>`;
-    return;
-  }
-
-  const teams=hasTeams()?T.teams:[];
-  const teamScores={};
-
-  for(const m of day.matches){
-    const ms=computeMatchStatus(mpSelectedDay,m);
-    html+=`<div class="match-card">`;
-    html+=`<div class="match-players"><div class="match-player${ms.winner===ms.p1Id?' text-gold':''}">${esc(ms.p1Name)}</div><div class="match-vs">vs</div><div class="match-player${ms.winner===ms.p2Id?' text-gold':''}">${esc(ms.p2Name)}</div></div>`;
-
-    let statusDisplay='AS';
-    if(ms.finished){
-      const winnerName=ms.winner===ms.p1Id?ms.p1Name:ms.p2Name;
-      statusDisplay=`${esc(winnerName)} ${ms.status}`;
-    } else if(ms.cumulative>0){
-      statusDisplay=`${esc(ms.p1Name)} ${ms.cumulative} UP`;
-    } else if(ms.cumulative<0){
-      statusDisplay=`${esc(ms.p2Name)} ${Math.abs(ms.cumulative)} UP`;
-    }
-    html+=`<div class="match-status">${statusDisplay}</div>`;
-
-    html+=`<div class="match-holes">`;
-    for(let i=0;i<18;i++){
-      const h=ms.holes[i]||'empty';
-      const cls=h==='won'?'mh-won':h==='lost'?'mh-lost':h==='halved'?'mh-halved':'mh-empty';
-      if(ms.finished && i+1>ms.finishHole){
-        html+=`<div class="match-hole mh-empty" style="opacity:.3">${i+1}</div>`;
+  if (tournamentId && db) {
+    // Try to load from Firebase
+    db.ref('tournaments/' + tournamentId).once('value').then(snapshot => {
+      const data = snapshot.val();
+      if (data) {
+        T = data;
+        startFirebaseSync();
+        showWelcomeScreen();
       } else {
-        html+=`<div class="match-hole ${cls}">${i+1}</div>`;
+        // No data for this hash — show wizard
+        showWizard();
       }
-    }
-    html+=`</div></div>`;
-
-    if(teams.length>1){
-      const t1=getTeamForPlayer(m.player1);
-      const t2=getTeamForPlayer(m.player2);
-      if(ms.finished){
-        if(t1&&ms.winner===m.player1) teamScores[t1.id]=(teamScores[t1.id]||0)+1;
-        if(t2&&ms.winner===m.player2) teamScores[t2.id]=(teamScores[t2.id]||0)+1;
-      } else if(ms.cumulative!==0){
-        // Partial point: leading team
-      }
-    }
-  }
-
-  if(teams.length>1){
-    html+=`<div class="card"><div class="section-title">Score par équipe</div>`;
-    for(const team of teams){
-      html+=`<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border)"><span style="font-weight:600">${esc(team.name)}</span><span class="text-gold" style="font-size:18px;font-weight:700">${teamScores[team.id]||0}</span></div>`;
-    }
-    html+=`</div>`;
-  }
-
-  container.innerHTML=html;
-}
-
-// ========== TAB: CONFIG ==========
-function renderConfig(container){
-  let html=`<div class="page-title">Configuration</div>`;
-
-  // Tournament name
-  html+=`<div class="config-section"><div class="section-title">Tournoi</div>`;
-  html+=`<div class="card"><div class="form-group"><label>Nom</label><input id="cfg-name" value="${esc(T.name)}" onchange="T.name=this.value;save()"></div></div></div>`;
-
-  // Teams & Players
-  html+=`<div class="config-section"><div class="section-title">Équipes & Joueurs</div>`;
-  for(let t=0;t<T.teams.length;t++){
-    const team=T.teams[t];
-    html+=`<div class="card"><div class="form-group"><label>Équipe</label><div class="form-row"><input value="${esc(team.name)}" onchange="T.teams[${t}].name=this.value;save()">`;
-    if(T.teams.length>1) html+=`<button class="btn btn-danger btn-sm" onclick="cfgRemoveTeam(${t})">Suppr.</button>`;
-    html+=`</div></div>`;
-    for(let p=0;p<team.players.length;p++){
-      const pl=team.players[p];
-      html+=`<div class="player-item">
-        <input class="pname" style="flex:1;min-width:0" value="${esc(pl.name)}" onchange="T.teams[${t}].players[${p}].name=this.value;save()">
-        <input class="phcp" style="width:60px" type="number" value="${pl.handicap}" min="0" max="54" onchange="T.teams[${t}].players[${p}].handicap=+this.value;save()">
-        <button class="remove-btn" onclick="cfgRemovePlayer(${t},${p})">×</button>
-      </div>`;
-    }
-    const totalPlayers=getAllPlayers().length;
-    if(totalPlayers<8) html+=`<button class="btn btn-secondary btn-sm mt-8" onclick="cfgAddPlayer(${t})">+ Joueur</button>`;
-    html+=`</div>`;
-  }
-  html+=`<button class="btn btn-secondary btn-block" onclick="cfgAddTeam()">+ Équipe</button></div>`;
-
-  // Courses
-  html+=`<div class="config-section"><div class="section-title">Parcours</div>`;
-  for(let i=0;i<T.courses.length;i++){
-    const c=T.courses[i];
-    html+=`<div class="config-item"><span class="ci-label">${esc(c.name)}</span><span class="ci-value">Par ${c.par}</span></div>`;
-  }
-  html+=`</div>`;
-
-  // Days
-  html+=`<div class="config-section"><div class="section-title">Journées</div>`;
-  for(let d=0;d<T.days.length;d++){
-    const day=T.days[d];
-    const course=getCourse(day.courseId);
-    html+=`<div class="config-item"><div><span class="ci-label">${esc(day.label)}</span><br><span class="ci-value">${course?esc(course.name):'-'} &middot; ${day.format}</span></div></div>`;
-  }
-  html+=`</div>`;
-
-  // Sharing
-  if(tournamentId){
-    const shareUrl=window.location.origin+window.location.pathname+'#'+tournamentId;
-    html+=`<div class="config-section"><div class="section-title">Partager</div>`;
-    html+=`<div class="card"><div class="text-dim" style="font-size:12px;margin-bottom:6px">Lien du tournoi (partagez-le avec les joueurs) :</div>`;
-    html+=`<div class="share-url" id="share-url">${esc(shareUrl)}</div>`;
-    html+=`<button class="btn btn-primary btn-block mb-8" onclick="cfgCopyLink()">Copier le lien</button>`;
-    html+=`<div class="text-dim" style="font-size:12px">Code : <strong style="color:var(--accent);font-size:16px">${esc(tournamentId)}</strong></div>`;
-    html+=`<div style="display:flex;align-items:center;margin-top:8px"><span id="conn-status-cfg" class="conn-dot ${isOnline?'conn-online':'conn-offline'}"></span><span class="text-dim" style="font-size:12px">${isOnline?'Synchronisation en direct':'Hors ligne — données locales'}</span></div>`;
-    html+=`</div></div>`;
-  }
-
-  // Actions
-  html+=`<div class="config-section"><div class="section-title">Actions</div>`;
-  html+=`<button class="btn btn-secondary btn-block mb-8" onclick="cfgExport()">Exporter JSON</button>`;
-  html+=`<button class="btn btn-secondary btn-block mb-8" onclick="document.getElementById('import-file').click()">Importer JSON</button>`;
-  html+=`<input type="file" id="import-file" accept=".json" style="display:none" onchange="cfgImport(event)">`;
-  html+=`<button class="btn btn-secondary btn-block mb-8" onclick="cfgNewWizard()">Nouveau tournoi (assistant)</button>`;
-  html+=`<button class="btn btn-danger btn-block" onclick="cfgReset()">Réinitialiser</button>`;
-  html+=`</div>`;
-
-  container.innerHTML=html;
-}
-
-function cfgAddTeam(){
-  T.teams.push({id:uid(),name:`Équipe ${T.teams.length+1}`,players:[{id:uid(),name:'',handicap:18}]});
-  save();render();
-}
-function cfgRemoveTeam(idx){
-  if(!confirm(`Supprimer l'équipe "${T.teams[idx].name}" et tous ses joueurs ?`)) return;
-  T.teams.splice(idx,1);
-  save();render();
-}
-function cfgAddPlayer(teamIdx){
-  if(getAllPlayers().length>=8){alert('Maximum 8 joueurs');return}
-  T.teams[teamIdx].players.push({id:uid(),name:'',handicap:18});
-  save();render();
-}
-function cfgRemovePlayer(teamIdx,playerIdx){
-  const p=T.teams[teamIdx].players[playerIdx];
-  if(!confirm(`Supprimer ${p.name||'ce joueur'} ?`)) return;
-  // Remove from groups/matches
-  for(const day of T.days){
-    if(day.groups) day.groups=day.groups.map(g=>g.filter(id=>id!==p.id));
-    if(day.matches) day.matches=day.matches.filter(m=>m.player1!==p.id&&m.player2!==p.id);
-  }
-  // Remove scores
-  for(let d=0;d<T.days.length;d++){
-    const key=`d${d}_${p.id}`;
-    delete T.scores[key];
-  }
-  T.teams[teamIdx].players.splice(playerIdx,1);
-  if(T.teams[teamIdx].players.length===0) T.teams.splice(teamIdx,1);
-  save();render();
-}
-
-function cfgExport(){
-  const blob=new Blob([JSON.stringify(T,null,2)],{type:'application/json'});
-  const url=URL.createObjectURL(blob);
-  const a=document.createElement('a');
-  a.href=url;a.download=`${T.name||'tournament'}.json`;
-  document.body.appendChild(a);a.click();document.body.removeChild(a);
-  URL.revokeObjectURL(url);
-}
-
-function cfgImport(event){
-  const file=event.target.files[0];
-  if(!file) return;
-  const reader=new FileReader();
-  reader.onload=function(e){
-    try{
-      const data=JSON.parse(e.target.result);
-      if(!data.teams||!data.days){alert('Fichier invalide');return}
-      T=data;
-      save();render();
-    }catch(err){alert('Erreur de lecture: '+err.message)}
-  };
-  reader.readAsText(file);
-  event.target.value='';
-}
-
-function cfgReset(){
-  if(!confirm('Supprimer toutes les données du tournoi ?')) return;
-  localStorage.removeItem('golf-tournament');
-  T=null;
-  showWizard();
-}
-
-function cfgCopyLink(){
-  const url=window.location.origin+window.location.pathname+'#'+tournamentId;
-  if(navigator.clipboard){
-    navigator.clipboard.writeText(url).then(()=>alert('Lien copié !')).catch(()=>{
-      prompt('Copiez ce lien :',url);
+    }).catch(() => {
+      showWizard();
     });
   } else {
-    prompt('Copiez ce lien :',url);
-  }
-}
-function cfgNewWizard(){
-  if(!confirm('Créer un nouveau tournoi ? Les données actuelles seront conservées jusqu\'à la validation.')) return;
-  showWizard();
-}
-
-// ========== INIT ==========
-function initApp(data){
-  if(data){
-    T=data;
-    if(!T.scores) T.scores={};
-    if(!T.teams) T.teams=[];
-    if(!T.days) T.days=[];
-    if(!T.courses) T.courses=[];
-    localStorage.setItem('golf-tournament',JSON.stringify(T));
-    lbSelectedDay=T.days.length>0?0:'general';
-    startFirebaseSync();
-    switchTab('leaderboard');
-  } else {
+    // No hash — show wizard to create new tournament
     showWizard();
   }
 }
 
-load();
+// ========== WELCOME SCREEN ==========
+function showWelcomeScreen() {
+  if (!T) { showWizard(); return; }
+  const el = document.getElementById('welcome-screen');
+  const teams = T.teams || [];
 
-if(tournamentId && db){
-  // Try to load from Firebase first
-  db.ref('tournaments/'+tournamentId).once('value').then((snapshot)=>{
-    const data=snapshot.val();
-    if(data){
-      initApp({
-        name:data.meta?.name||'Tournoi',
-        teams:data.teams||[],
-        courses:data.courses||[],
-        days:data.days||[],
-        scores:data.scores||{}
-      });
-    } else if(T){
-      // Firebase has nothing but we have local data — upload it
-      save();
-      initApp(T);
-    } else {
-      showWizard();
-    }
-  }).catch(()=>{
-    // Offline fallback
-    if(T) initApp(T);
-    else showWizard();
+  let html = '<div class="welcome-inner">';
+  html += `<div class="welcome-title">${esc(T.name || 'Tournoi')}</div>`;
+  html += '<div class="welcome-subtitle">Bienvenue au tournoi</div>';
+
+  html += '<div class="welcome-teams">';
+  teams.forEach(team => {
+    const playerNames = (team.players || []).map(p => p.name).join(', ');
+    html += `<div class="welcome-team">
+      <div class="welcome-team-name">${esc(team.name)}</div>
+      <div class="welcome-team-players">${esc(playerNames)}</div>
+    </div>`;
   });
-} else if(T){
-  initApp(T);
-} else {
+  html += '</div>';
+
+  html += '<div class="welcome-pick-title">Choisissez votre joueur</div>';
+  teams.forEach(team => {
+    (team.players || []).forEach(p => {
+      html += `<button class="welcome-player-btn" onclick="selectPlayer('${p.id}')">
+        ${esc(p.name)} <span class="wp-team">${esc(team.name)}</span>
+      </button>`;
+    });
+  });
+
+  html += '</div>';
+  el.innerHTML = html;
+  el.classList.remove('hidden');
+  document.getElementById('app-header').classList.add('hidden');
+  document.getElementById('bottom-nav').classList.add('hidden');
+}
+
+function selectPlayer(playerId) {
+  currentPlayerId = playerId;
+  localStorage.setItem('golf-currentPlayerId', playerId);
+  document.getElementById('welcome-screen').classList.add('hidden');
+
+  // Auto-navigate to player's scorecard
+  const dayIndex = getCurrentDay();
+  const groupIdx = getPlayerGroup(dayIndex, playerId);
+  currentTab = groupIdx === 0 ? 'cardA' : 'cardB';
+
+  document.getElementById('app-header').classList.remove('hidden');
+  document.getElementById('bottom-nav').classList.remove('hidden');
+  render();
+}
+
+// ========== SETUP WIZARD ==========
+function showWizard() {
+  wizardStep = 0;
+  wizardData = {
+    name: '',
+    numTeams: 3,
+    teams: [],
+    numRounds: 3,
+    rounds: []
+  };
+  renderWizard();
+  document.getElementById('wizard-screen').classList.remove('hidden');
+  document.getElementById('welcome-screen').classList.add('hidden');
+  document.getElementById('app-header').classList.add('hidden');
+  document.getElementById('bottom-nav').classList.add('hidden');
+}
+
+function renderWizard() {
+  const el = document.getElementById('wizard-screen');
+  const totalSteps = 4;
+  let progressHtml = '<div class="wizard-progress">';
+  for (let i = 0; i < totalSteps; i++) {
+    const cls = i < wizardStep ? 'done' : (i === wizardStep ? 'current' : '');
+    progressHtml += `<div class="step ${cls}"></div>`;
+  }
+  progressHtml += '</div>';
+
+  let bodyHtml = '';
+  let title = '';
+
+  if (wizardStep === 0) {
+    title = 'Nom du tournoi';
+    bodyHtml = `
+      <div class="form-group">
+        <label>Nom du tournoi</label>
+        <input id="wiz-name" type="text" value="${esc(wizardData.name)}" placeholder="Ex: Carnac Major 2026">
+      </div>`;
+  } else if (wizardStep === 1) {
+    title = 'Equipes & Joueurs';
+    if (wizardData.teams.length === 0) {
+      for (let i = 0; i < wizardData.numTeams; i++) {
+        wizardData.teams.push({ id: uid(), name: `Equipe ${i + 1}`, players: [{ id: uid(), name: '', handicap: 18 }] });
+      }
+    }
+    bodyHtml = `
+      <div class="form-group">
+        <label>Nombre d'equipes</label>
+        <div style="display:flex;gap:8px;margin-bottom:12px">
+          ${[2, 3, 4].map(n => `<button class="btn ${wizardData.numTeams === n ? 'btn-primary' : 'btn-secondary'}" style="flex:1" onclick="wizSetNumTeams(${n})">${n}</button>`).join('')}
+        </div>
+      </div>`;
+
+    wizardData.teams.forEach((team, ti) => {
+      bodyHtml += `<div class="card">
+        <div class="form-group">
+          <label>Nom de l'equipe ${ti + 1}</label>
+          <input type="text" value="${esc(team.name)}" onchange="wizUpdateTeamName(${ti}, this.value)">
+        </div>
+        <div class="section-title">Joueurs</div>`;
+
+      (team.players || []).forEach((p, pi) => {
+        bodyHtml += `<div class="player-item">
+          <input style="flex:1" type="text" value="${esc(p.name)}" placeholder="Nom" onchange="wizUpdatePlayer(${ti},${pi},'name',this.value)">
+          <input style="width:60px" type="number" value="${p.handicap}" placeholder="Hcp" onchange="wizUpdatePlayer(${ti},${pi},'handicap',+this.value)">
+          <button class="remove-btn" onclick="wizRemovePlayer(${ti},${pi})">x</button>
+        </div>`;
+      });
+
+      const totalPlayers = wizardData.teams.reduce((s, t) => s + t.players.length, 0);
+      if (totalPlayers < 8) {
+        bodyHtml += `<button class="btn btn-secondary btn-sm mt-8" onclick="wizAddPlayer(${ti})">+ Joueur</button>`;
+      }
+      bodyHtml += '</div>';
+    });
+  } else if (wizardStep === 2) {
+    title = 'Journees & Parcours';
+    if (wizardData.rounds.length === 0) {
+      for (let i = 0; i < wizardData.numRounds; i++) {
+        wizardData.rounds.push({ courseId: COURSES[i % COURSES.length].id, format: 'stableford', label: `Jour ${i + 1}` });
+      }
+    }
+    bodyHtml = `
+      <div class="form-group">
+        <label>Nombre de journees</label>
+        <div style="display:flex;gap:8px;margin-bottom:12px">
+          ${[1, 2, 3].map(n => `<button class="btn ${wizardData.numRounds === n ? 'btn-primary' : 'btn-secondary'}" style="flex:1" onclick="wizSetNumRounds(${n})">${n}</button>`).join('')}
+        </div>
+      </div>`;
+
+    wizardData.rounds.forEach((round, ri) => {
+      bodyHtml += `<div class="card">
+        <div class="section-title">Jour ${ri + 1}</div>
+        <div class="form-group">
+          <label>Nom</label>
+          <input type="text" value="${esc(round.label)}" onchange="wizUpdateRound(${ri},'label',this.value)">
+        </div>
+        <div class="form-group">
+          <label>Parcours</label>
+          <select onchange="wizUpdateRound(${ri},'courseId',this.value)">
+            ${COURSES.map(c => `<option value="${c.id}" ${round.courseId === c.id ? 'selected' : ''}>${esc(c.name)} (par ${c.par})</option>`).join('')}
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Format</label>
+          <select onchange="wizUpdateRound(${ri},'format',this.value)">
+            <option value="stableford" ${round.format === 'stableford' ? 'selected' : ''}>Stableford</option>
+            <option value="matchplay" ${round.format === 'matchplay' ? 'selected' : ''}>Match Play</option>
+            <option value="chouette" ${round.format === 'chouette' ? 'selected' : ''}>Chouette</option>
+          </select>
+        </div>
+      </div>`;
+    });
+  } else if (wizardStep === 3) {
+    title = 'Groupes & Points';
+    // Initialize groups/matches/points for each round if not set
+    wizardData.rounds.forEach((round, ri) => {
+      if (!round.groups) round.groups = [];
+      if (!round.matches) round.matches = [];
+      if (!round.pointsConfig) {
+        const allP = wizardData.teams.reduce((a, t) => a.concat(t.players), []);
+        if (round.format === 'stableford') {
+          round.pointsConfig = { positions: defaultStablefordPositions(allP.length) };
+          if (round.groups.length === 0) {
+            // Auto-create 2 groups, split players evenly
+            const half = Math.ceil(allP.length / 2);
+            round.groups = [allP.slice(0, half).map(p => p.id), allP.slice(half).map(p => p.id)];
+          }
+        } else if (round.format === 'matchplay') {
+          round.pointsConfig = { win: 2, halve: 1, loss: 0 };
+          if (round.matches.length === 0) {
+            // Auto-create cross-team matches
+            const allP2 = wizardData.teams.reduce((a, t) => a.concat(t.players.map(p => ({ ...p, teamId: t.id }))), []);
+            autoMatchPlay(round, allP2);
+          }
+          // For matchplay, groups are derived from matches for scorecard
+          if (round.groups.length === 0) {
+            round.groups = round.matches.map(m => [m.player1, m.player2]);
+          }
+        } else if (round.format === 'chouette') {
+          round.pointsConfig = { first: 4, second: 2, third: 0 };
+          if (round.groups.length === 0) {
+            // Auto-create groups of 3, one per team
+            autoChouetteGroups(round, wizardData.teams);
+          }
+        }
+      }
+    });
+
+    wizardData.rounds.forEach((round, ri) => {
+      bodyHtml += `<div class="card">
+        <div class="section-title">Jour ${ri + 1} - ${formatLabel(round.format)}</div>`;
+
+      if (round.format === 'stableford') {
+        bodyHtml += '<div style="font-size:13px;color:var(--text-dim);margin-bottom:8px">Groupes de marche (logistiques)</div>';
+        (round.groups || []).forEach((group, gi) => {
+          bodyHtml += `<div style="margin-bottom:8px"><strong>Groupe ${String.fromCharCode(65 + gi)}</strong>: `;
+          bodyHtml += group.map(pid => {
+            const p = findWizPlayer(pid);
+            return p ? esc(p.name || '?') : '?';
+          }).join(', ');
+          bodyHtml += '</div>';
+        });
+        bodyHtml += '<div style="font-size:13px;color:var(--text-dim);margin-top:8px;margin-bottom:4px">Points par position</div>';
+        const posPoints = round.pointsConfig.positions || [];
+        posPoints.forEach((pts, idx) => {
+          bodyHtml += `<div class="form-row" style="margin-bottom:4px;align-items:center">
+            <span style="width:40px;font-size:13px">${idx + 1}${idx === 0 ? 'er' : 'e'}</span>
+            <input type="number" style="width:60px" value="${pts}" onchange="wizUpdatePosPoints(${ri},${idx},+this.value)">
+          </div>`;
+        });
+      } else if (round.format === 'matchplay') {
+        bodyHtml += '<div style="font-size:13px;color:var(--text-dim);margin-bottom:8px">Matchs 1v1</div>';
+        (round.matches || []).forEach((match, mi) => {
+          const p1 = findWizPlayer(match.player1);
+          const p2 = findWizPlayer(match.player2);
+          bodyHtml += `<div style="margin-bottom:4px;font-size:13px">${p1 ? esc(p1.name) : '?'} vs ${p2 ? esc(p2.name) : '?'}</div>`;
+        });
+        bodyHtml += `<div class="form-row mt-8" style="align-items:center">
+          <div><label>Victoire</label><input type="number" value="${round.pointsConfig.win}" onchange="wizUpdateMatchPts(${ri},'win',+this.value)"></div>
+          <div><label>Nul</label><input type="number" value="${round.pointsConfig.halve}" onchange="wizUpdateMatchPts(${ri},'halve',+this.value)"></div>
+          <div><label>Defaite</label><input type="number" value="${round.pointsConfig.loss}" onchange="wizUpdateMatchPts(${ri},'loss',+this.value)"></div>
+        </div>`;
+      } else if (round.format === 'chouette') {
+        bodyHtml += '<div style="font-size:13px;color:var(--text-dim);margin-bottom:8px">Groupes de 3 (un par equipe)</div>';
+        (round.groups || []).forEach((group, gi) => {
+          bodyHtml += `<div style="margin-bottom:4px"><strong>Groupe ${String.fromCharCode(65 + gi)}</strong>: `;
+          bodyHtml += group.map(pid => {
+            const p = findWizPlayer(pid);
+            return p ? esc(p.name || '?') : '?';
+          }).join(', ');
+          bodyHtml += '</div>';
+        });
+        bodyHtml += `<div class="form-row mt-8" style="align-items:center">
+          <div><label>1er</label><input type="number" value="${round.pointsConfig.first}" onchange="wizUpdateChouettePts(${ri},'first',+this.value)"></div>
+          <div><label>2e</label><input type="number" value="${round.pointsConfig.second}" onchange="wizUpdateChouettePts(${ri},'second',+this.value)"></div>
+          <div><label>3e</label><input type="number" value="${round.pointsConfig.third}" onchange="wizUpdateChouettePts(${ri},'third',+this.value)"></div>
+        </div>`;
+      }
+
+      bodyHtml += '</div>';
+    });
+  }
+
+  let footerHtml = '<div class="wizard-footer">';
+  if (wizardStep > 0) {
+    footerHtml += '<button class="btn btn-secondary" onclick="wizBack()">Retour</button>';
+  }
+  if (wizardStep < 3) {
+    footerHtml += '<button class="btn btn-primary" onclick="wizNext()">Suivant</button>';
+  } else {
+    footerHtml += '<button class="btn btn-primary" onclick="wizFinish()">Creer le tournoi</button>';
+  }
+  footerHtml += '</div>';
+
+  el.innerHTML = `
+    <div class="wizard-header"><h2>${title}</h2></div>
+    ${progressHtml}
+    <div class="wizard-body">${bodyHtml}</div>
+    ${footerHtml}
+  `;
+}
+
+function wizSetNumTeams(n) {
+  wizardData.numTeams = n;
+  while (wizardData.teams.length < n) {
+    wizardData.teams.push({ id: uid(), name: `Equipe ${wizardData.teams.length + 1}`, players: [{ id: uid(), name: '', handicap: 18 }] });
+  }
+  while (wizardData.teams.length > n) {
+    wizardData.teams.pop();
+  }
+  renderWizard();
+}
+
+function wizSetNumRounds(n) {
+  wizardData.numRounds = n;
+  while (wizardData.rounds.length < n) {
+    const i = wizardData.rounds.length;
+    wizardData.rounds.push({ courseId: COURSES[i % COURSES.length].id, format: 'stableford', label: `Jour ${i + 1}` });
+  }
+  while (wizardData.rounds.length > n) {
+    wizardData.rounds.pop();
+  }
+  renderWizard();
+}
+
+function wizUpdateTeamName(ti, val) { wizardData.teams[ti].name = val; }
+function wizUpdatePlayer(ti, pi, field, val) { wizardData.teams[ti].players[pi][field] = val; }
+function wizAddPlayer(ti) {
+  wizardData.teams[ti].players.push({ id: uid(), name: '', handicap: 18 });
+  renderWizard();
+}
+function wizRemovePlayer(ti, pi) {
+  if (wizardData.teams[ti].players.length <= 1) return;
+  wizardData.teams[ti].players.splice(pi, 1);
+  renderWizard();
+}
+function wizUpdateRound(ri, field, val) {
+  wizardData.rounds[ri][field] = val;
+  // Reset groups/matches when format changes
+  if (field === 'format') {
+    wizardData.rounds[ri].groups = [];
+    wizardData.rounds[ri].matches = [];
+    wizardData.rounds[ri].pointsConfig = null;
+  }
+}
+function wizUpdatePosPoints(ri, idx, val) {
+  wizardData.rounds[ri].pointsConfig.positions[idx] = val;
+}
+function wizUpdateMatchPts(ri, field, val) {
+  wizardData.rounds[ri].pointsConfig[field] = val;
+}
+function wizUpdateChouettePts(ri, field, val) {
+  wizardData.rounds[ri].pointsConfig[field] = val;
+}
+
+function findWizPlayer(pid) {
+  for (const team of wizardData.teams) {
+    const p = team.players.find(pl => pl.id === pid);
+    if (p) return p;
+  }
+  return null;
+}
+
+function autoMatchPlay(round, allPlayers) {
+  // Create cross-team 1v1 matches
+  round.matches = [];
+  const teams = wizardData.teams;
+  const used = new Set();
+  for (let i = 0; i < teams.length; i++) {
+    for (let j = i + 1; j < teams.length; j++) {
+      for (const p1 of teams[i].players) {
+        if (used.has(p1.id)) continue;
+        for (const p2 of teams[j].players) {
+          if (used.has(p2.id)) continue;
+          round.matches.push({ player1: p1.id, player2: p2.id });
+          used.add(p1.id);
+          used.add(p2.id);
+          break;
+        }
+        if (used.has(p1.id)) break;
+      }
+    }
+  }
+}
+
+function autoChouetteGroups(round, teams) {
+  round.groups = [];
+  if (teams.length < 3) return;
+  const maxGroups = Math.min(...teams.map(t => t.players.length));
+  for (let gi = 0; gi < maxGroups; gi++) {
+    const group = [];
+    for (let ti = 0; ti < Math.min(3, teams.length); ti++) {
+      if (teams[ti].players[gi]) {
+        group.push(teams[ti].players[gi].id);
+      }
+    }
+    if (group.length === 3) round.groups.push(group);
+  }
+}
+
+function wizBack() {
+  if (wizardStep === 0) return;
+  // Save current step data
+  if (wizardStep === 0) {
+    wizardData.name = document.getElementById('wiz-name')?.value || '';
+  }
+  wizardStep--;
+  renderWizard();
+}
+
+function wizNext() {
+  // Validate & save current step
+  if (wizardStep === 0) {
+    const name = document.getElementById('wiz-name')?.value?.trim();
+    if (!name) { alert('Veuillez entrer un nom de tournoi'); return; }
+    wizardData.name = name;
+  } else if (wizardStep === 1) {
+    // Validate players have names
+    for (const team of wizardData.teams) {
+      if (!team.name.trim()) { alert('Chaque equipe doit avoir un nom'); return; }
+      for (const p of team.players) {
+        if (!p.name.trim()) { alert('Chaque joueur doit avoir un nom'); return; }
+      }
+    }
+  }
+  wizardStep++;
+  renderWizard();
+}
+
+function wizFinish() {
+  // Create tournament
+  const allPlayers = wizardData.teams.reduce((a, t) => a.concat(t.players), []);
+  const firstPlayerId = allPlayers[0]?.id;
+
+  // Build days
+  const days = wizardData.rounds.map(round => ({
+    label: round.label,
+    courseId: round.courseId,
+    format: round.format,
+    groups: round.groups || [],
+    matches: round.matches || [],
+    pointsConfig: round.pointsConfig || {}
+  }));
+
+  // Build courses list (just IDs for reference)
+  const coursesUsed = [...new Set(wizardData.rounds.map(r => r.courseId))];
+
+  T = {
+    name: wizardData.name,
+    adminId: firstPlayerId, // first player is admin by default
+    currentDay: 0,
+    teams: wizardData.teams.map(t => ({
+      id: t.id,
+      name: t.name,
+      players: t.players.map(p => ({ id: p.id, name: p.name, handicap: p.handicap || 0 }))
+    })),
+    courses: coursesUsed,
+    days: days,
+    scores: {},
+    signed: {}
+  };
+
+  // Generate tournament ID and save to Firebase
+  tournamentId = generateTournamentId();
+  setTournamentId(tournamentId);
+  save();
+  startFirebaseSync();
+
+  document.getElementById('wizard-screen').classList.add('hidden');
+  showWelcomeScreen();
+}
+
+function formatLabel(format) {
+  if (format === 'stableford') return 'Stableford';
+  if (format === 'matchplay') return 'Match Play';
+  if (format === 'chouette') return 'Chouette';
+  return format;
+}
+
+function esc(str) {
+  if (!str) return '';
+  return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
+// ========== NAVIGATION ==========
+function switchTab(tab) {
+  currentTab = tab;
+  render();
+}
+
+function render() {
+  if (!T) return;
+
+  document.getElementById('header-title').textContent = T.name || 'Tournoi';
+
+  // Show/hide gear button (admin only)
+  const gearBtn = document.getElementById('gear-btn');
+  if (isAdmin()) {
+    gearBtn.classList.remove('hidden');
+  } else {
+    gearBtn.classList.add('hidden');
+    if (currentTab === 'config') currentTab = 'teams';
+  }
+
+  // Update nav
+  const nav = document.getElementById('bottom-nav');
+  nav.classList.remove('hidden');
+  document.getElementById('app-header').classList.remove('hidden');
+
+  // Show/hide card B tab
+  const dayIndex = getCurrentDay();
+  const groups = getDayGroups(dayIndex);
+  const cardBBtn = nav.querySelector('[data-tab="cardB"]');
+  if (groups.length <= 1) {
+    cardBBtn.classList.add('hidden');
+    if (currentTab === 'cardB') currentTab = 'cardA';
+  } else {
+    cardBBtn.classList.remove('hidden');
+  }
+
+  // Update active tab
+  nav.querySelectorAll('button').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.tab === currentTab);
+  });
+
+  // Render content
+  const content = document.getElementById('app-content');
+  content.scrollTop = 0;
+
+  if (currentTab === 'teams') renderTeamsTab(content);
+  else if (currentTab === 'players') renderPlayersTab(content);
+  else if (currentTab === 'day') renderDayTab(content);
+  else if (currentTab === 'cardA') renderScorecardTab(content, 0);
+  else if (currentTab === 'cardB') renderScorecardTab(content, 1);
+  else if (currentTab === 'config') renderConfigTab(content);
+}
+
+// ========== TEAM LEADERBOARD ==========
+function renderTeamsTab(el) {
+  const totals = calcTeamTotals();
+  const numDays = (T.days || []).length;
+
+  let html = '<div class="fade-in">';
+  html += '<div class="page-title">Classement Equipes</div>';
+  html += '<div class="scorecard-wrap"><table class="lb-table"><thead><tr>';
+  html += '<th>Equipe</th>';
+  for (let d = 0; d < numDays; d++) {
+    html += `<th class="num">J${d + 1}</th>`;
+  }
+  html += '<th class="num">Total</th></tr></thead><tbody>';
+
+  totals.forEach((item, idx) => {
+    const isFirst = idx === 0 && item.total > 0;
+    html += `<tr${isFirst ? ' class="highlight"' : ''}>`;
+    html += `<td style="font-weight:600">${esc(item.team.name)}</td>`;
+    item.rounds.forEach(r => {
+      html += `<td class="num">${r || '-'}</td>`;
+    });
+    html += `<td class="num" style="font-weight:700;color:var(--accent)">${item.total}</td>`;
+    html += '</tr>';
+  });
+
+  html += '</tbody></table></div></div>';
+  el.innerHTML = html;
+}
+
+// ========== PLAYER LEADERBOARD ==========
+function renderPlayersTab(el) {
+  const totals = calcPlayerTotals();
+  const numDays = (T.days || []).length;
+
+  let html = '<div class="fade-in">';
+  html += '<div class="page-title">Classement Joueurs</div>';
+  html += '<div class="scorecard-wrap"><table class="lb-table"><thead><tr>';
+  html += '<th>Pos</th><th>Joueur</th><th>Equipe</th>';
+  for (let d = 0; d < numDays; d++) {
+    html += `<th class="num">J${d + 1} pts</th>`;
+  }
+  html += '<th class="num">Total</th>';
+  for (let d = 0; d < numDays; d++) {
+    html += `<th class="num">J${d + 1} brut</th>`;
+  }
+  html += '</tr></thead><tbody>';
+
+  totals.forEach((item, idx) => {
+    const team = getTeamForPlayer(item.player.id);
+    html += `<tr>`;
+    html += `<td class="pos">${idx + 1}</td>`;
+    html += `<td style="font-weight:600">${esc(item.player.name)}</td>`;
+    html += `<td style="font-size:12px;color:var(--text-dim)">${team ? esc(team.name) : ''}</td>`;
+    item.roundPts.forEach(p => {
+      html += `<td class="num">${p || '-'}</td>`;
+    });
+    html += `<td class="num" style="font-weight:700;color:var(--accent)">${item.totalPts}</td>`;
+    item.roundBrut.forEach(b => {
+      html += `<td class="num">${b != null ? b : '-'}</td>`;
+    });
+    html += '</tr>';
+  });
+
+  html += '</tbody></table></div></div>';
+  el.innerHTML = html;
+}
+
+// ========== DAY LEADERBOARD ==========
+function renderDayTab(el) {
+  const numDays = (T.days || []).length;
+  const dayIdx = viewingDay !== null ? viewingDay : getCurrentDay();
+
+  let html = '<div class="fade-in">';
+  html += '<div class="page-title">Journee</div>';
+
+  // Day chips
+  if (numDays > 1) {
+    html += '<div class="day-chips">';
+    for (let d = 0; d < numDays; d++) {
+      const active = d === dayIdx;
+      const label = T.days[d]?.label || `Jour ${d + 1}`;
+      html += `<button class="day-chip ${active ? 'active' : ''}" onclick="setViewingDay(${d})">${esc(label)}</button>`;
+    }
+    html += '</div>';
+  }
+
+  if (!T.days || !T.days[dayIdx]) {
+    html += '<div class="card text-center text-dim">Pas de journee configuree</div>';
+    html += '</div>';
+    el.innerHTML = html;
+    return;
+  }
+
+  const day = T.days[dayIdx];
+  const course = getCourse(day.courseId);
+  html += `<div style="font-size:13px;color:var(--text-dim);margin-bottom:8px">${course ? esc(course.name) : ''} - ${formatLabel(day.format)}</div>`;
+
+  // Signing progress
+  const allPlayers = getAllPlayers();
+  const signedCount = allPlayers.filter(p => isPlayerSigned(dayIdx, p.id)).length;
+  html += `<div class="sign-progress">
+    <span>${signedCount}/${allPlayers.length} cartes signees</span>
+    <div class="sign-progress-bar"><div class="sign-progress-fill" style="width:${allPlayers.length > 0 ? (signedCount / allPlayers.length * 100) : 0}%"></div></div>
+  </div>`;
+
+  if (day.format === 'stableford') {
+    html += renderDayStableford(dayIdx, day);
+  } else if (day.format === 'matchplay') {
+    html += renderDayMatchPlay(dayIdx, day);
+  } else if (day.format === 'chouette') {
+    html += renderDayChouette(dayIdx, day);
+  }
+
+  html += '</div>';
+  el.innerHTML = html;
+}
+
+function setViewingDay(d) {
+  viewingDay = d;
+  renderDayTab(document.getElementById('app-content'));
+}
+
+function renderDayStableford(dayIdx, day) {
+  const allPlayers = getAllPlayers();
+  const config = day.pointsConfig || {};
+  const posPoints = config.positions || defaultStablefordPositions(allPlayers.length);
+
+  const ranked = allPlayers.map(p => ({
+    player: p,
+    stableford: calcStablefordTotal(dayIdx, p.id),
+    signed: isPlayerSigned(dayIdx, p.id)
+  })).sort((a, b) => b.stableford - a.stableford);
+
+  let html = '<table class="lb-table"><thead><tr>';
+  html += '<th>Pos</th><th>Joueur</th><th class="num">Stableford</th><th class="num">Pts equipe</th><th>Signe</th>';
+  html += '</tr></thead><tbody>';
+
+  ranked.forEach((item, idx) => {
+    const teamPts = posPoints[idx] !== undefined ? posPoints[idx] : 0;
+    html += `<tr>
+      <td class="pos">${idx + 1}</td>
+      <td>${esc(item.player.name)}</td>
+      <td class="num" style="font-weight:700">${item.stableford}</td>
+      <td class="num">${teamPts}</td>
+      <td class="num">${item.signed ? '&#10003;' : ''}${isAdmin() && item.signed ? ` <button class="btn btn-sm btn-danger" onclick="unlockCard(${dayIdx},'${item.player.id}')">Debloquer</button>` : ''}</td>
+    </tr>`;
+  });
+
+  html += '</tbody></table>';
+  return html;
+}
+
+function renderDayMatchPlay(dayIdx, day) {
+  let html = '';
+  const config = day.pointsConfig || {};
+
+  (day.matches || []).forEach((match, mi) => {
+    const p1 = getPlayer(match.player1);
+    const p2 = getPlayer(match.player2);
+    if (!p1 || !p2) return;
+    const result = calcMatchPlayStatus(dayIdx, match);
+
+    html += `<div class="match-card">
+      <div class="match-players">
+        <div class="match-player">${esc(p1.name)}</div>
+        <div class="match-vs">vs</div>
+        <div class="match-player">${esc(p2.name)}</div>
+      </div>
+      <div class="match-status">${esc(result.status)}</div>
+      <div class="match-holes">`;
+
+    result.results.forEach((r, hi) => {
+      let cls = 'mh-empty';
+      let lbl = hi + 1;
+      if (r === 'p1') cls = 'mh-won';
+      else if (r === 'p2') cls = 'mh-lost';
+      else if (r === 'halved') cls = 'mh-halved';
+      html += `<div class="match-hole ${cls}">${lbl}</div>`;
+    });
+
+    html += '</div>';
+
+    if (result.finished || result.holesPlayed === 18) {
+      const winPts = config.win !== undefined ? config.win : 2;
+      const halvePts = config.halve !== undefined ? config.halve : 1;
+      const lossPts = config.loss !== undefined ? config.loss : 0;
+      let p1pts, p2pts;
+      if (result.lead > 0) { p1pts = winPts; p2pts = lossPts; }
+      else if (result.lead < 0) { p1pts = lossPts; p2pts = winPts; }
+      else { p1pts = halvePts; p2pts = halvePts; }
+      html += `<div style="text-align:center;margin-top:8px;font-size:12px;color:var(--text-dim)">
+        ${esc(p1.name)}: ${p1pts} pts | ${esc(p2.name)}: ${p2pts} pts
+      </div>`;
+    }
+
+    html += '</div>';
+  });
+
+  return html;
+}
+
+function renderDayChouette(dayIdx, day) {
+  let html = '';
+  const config = day.pointsConfig || {};
+  const pts1 = config.first !== undefined ? config.first : 4;
+  const pts2 = config.second !== undefined ? config.second : 2;
+  const pts3 = config.third !== undefined ? config.third : 0;
+
+  (day.groups || []).forEach((group, gi) => {
+    const result = calcChouetteResults(dayIdx, group);
+    if (!result) return;
+
+    html += `<div class="chouette-group">
+      <div class="chouette-title">Groupe ${String.fromCharCode(65 + gi)}</div>
+      <table class="lb-table"><thead><tr><th>Pos</th><th>Joueur</th><th class="num">Stableford</th><th class="num">Pts</th></tr></thead><tbody>`;
+
+    const podium = [
+      { pid: result.first, pts: pts1, pos: 1 },
+      { pid: result.second, pts: pts2, pos: 2 },
+      { pid: result.third, pts: pts3, pos: 3 }
+    ];
+    podium.forEach(item => {
+      const p = getPlayer(item.pid);
+      if (!p) return;
+      html += `<tr>
+        <td class="pos">${item.pos}</td>
+        <td>${esc(p.name)}</td>
+        <td class="num" style="font-weight:700">${result.stablefords[item.pid]}</td>
+        <td class="num">${item.pts}</td>
+      </tr>`;
+    });
+
+    html += '</tbody></table></div>';
+  });
+
+  return html;
+}
+
+function unlockCard(dayIdx, playerId) {
+  if (!isAdmin()) return;
+  if (!T.signed) T.signed = {};
+  T.signed[`d${dayIdx}_${playerId}`] = false;
+  saveSigned();
+  render();
+}
+
+// ========== SCORECARD TAB ==========
+function renderScorecardTab(el, groupIndex) {
+  const dayIndex = getCurrentDay();
+  if (!T.days || !T.days[dayIndex]) {
+    el.innerHTML = '<div class="fade-in card text-center text-dim">Pas de journee en cours</div>';
+    return;
+  }
+
+  const day = T.days[dayIndex];
+  const course = getCourse(day.courseId);
+  if (!course) {
+    el.innerHTML = '<div class="fade-in card text-center text-dim">Parcours non trouve</div>';
+    return;
+  }
+
+  const groups = day.groups || [];
+  const group = groups[groupIndex] || [];
+  const players = group.map(pid => getPlayer(pid)).filter(Boolean);
+
+  if (players.length === 0) {
+    el.innerHTML = '<div class="fade-in card text-center text-dim">Pas de joueurs dans ce groupe</div>';
+    return;
+  }
+
+  let html = '<div class="fade-in">';
+  html += `<div style="font-size:13px;color:var(--text-dim);margin-bottom:8px">${esc(day.label || '')} - ${esc(course.name)} - Groupe ${String.fromCharCode(65 + groupIndex)}</div>`;
+  html += '<div class="scorecard-wrap"><table class="scorecard">';
+
+  // Header row: hole numbers
+  html += '<thead><tr><th class="row-label-header">Trou</th>';
+  for (let i = 0; i < 9; i++) html += `<th>${i + 1}</th>`;
+  html += '<th class="out-col">OUT</th>';
+  for (let i = 9; i < 18; i++) html += `<th>${i + 1}</th>`;
+  html += '<th class="in-col">IN</th><th class="total-col">TOT</th>';
+  html += '</tr></thead><tbody>';
+
+  // Par row
+  html += '<tr><td class="row-label">Par</td>';
+  let parOut = 0, parIn = 0;
+  for (let i = 0; i < 9; i++) { html += `<td>${course.holes[i].par}</td>`; parOut += course.holes[i].par; }
+  html += `<td class="out-col">${parOut}</td>`;
+  for (let i = 9; i < 18; i++) { html += `<td>${course.holes[i].par}</td>`; parIn += course.holes[i].par; }
+  html += `<td class="in-col">${parIn}</td><td class="total-col">${parOut + parIn}</td>`;
+  html += '</tr>';
+
+  // SI row
+  html += '<tr><td class="row-label">SI</td>';
+  for (let i = 0; i < 9; i++) html += `<td>${course.holes[i].si}</td>`;
+  html += '<td class="out-col"></td>';
+  for (let i = 9; i < 18; i++) html += `<td>${course.holes[i].si}</td>`;
+  html += '<td class="in-col"></td><td class="total-col"></td>';
+  html += '</tr>';
+
+  // Player rows
+  players.forEach(player => {
+    const scores = getPlayerScores(dayIndex, player.id);
+    const signed = isPlayerSigned(dayIndex, player.id);
+    const editable = canEditPlayer(player.id) && !signed;
+
+    // Coups recus row
+    html += `<tr><td class="row-label" title="${esc(player.name)}" style="font-size:10px;color:var(--text-dim)">CR ${esc(player.name.split(' ')[0])}</td>`;
+    let crOut = 0, crIn = 0;
+    for (let i = 0; i < 9; i++) {
+      const cr = strokesReceived(player.handicap, course.holes[i].si);
+      crOut += cr;
+      html += `<td style="font-size:10px;color:var(--text-dim)">${cr || ''}</td>`;
+    }
+    html += `<td class="out-col" style="font-size:10px;color:var(--text-dim)">${crOut}</td>`;
+    for (let i = 9; i < 18; i++) {
+      const cr = strokesReceived(player.handicap, course.holes[i].si);
+      crIn += cr;
+      html += `<td style="font-size:10px;color:var(--text-dim)">${cr || ''}</td>`;
+    }
+    html += `<td class="in-col" style="font-size:10px;color:var(--text-dim)">${crIn}</td>`;
+    html += `<td class="total-col" style="font-size:10px;color:var(--text-dim)">${crOut + crIn}</td></tr>`;
+
+    // Brut score row (editable)
+    html += `<tr><td class="row-label" style="color:var(--accent);font-size:11px">${esc(player.name.split(' ')[0])}${signed ? ' &#128274;' : ''}</td>`;
+    let brutOut = 0, brutOutComplete = true;
+    for (let i = 0; i < 9; i++) {
+      const val = scores[i];
+      const cls = val != null ? getScoreClass(val, course.holes[i].par) : '';
+      const editCls = editable ? 'editable' : (signed ? 'locked' : '');
+      html += `<td class="brut-cell ${cls} ${editCls}" onclick="openScoreModal(${dayIndex},'${player.id}',${i})">${val != null ? val : ''}</td>`;
+      if (val != null) brutOut += val; else brutOutComplete = false;
+    }
+    html += `<td class="out-col">${brutOutComplete ? brutOut : (brutOut > 0 ? brutOut : '')}</td>`;
+    let brutIn = 0, brutInComplete = true;
+    for (let i = 9; i < 18; i++) {
+      const val = scores[i];
+      const cls = val != null ? getScoreClass(val, course.holes[i].par) : '';
+      const editCls = editable ? 'editable' : (signed ? 'locked' : '');
+      html += `<td class="brut-cell ${cls} ${editCls}" onclick="openScoreModal(${dayIndex},'${player.id}',${i})">${val != null ? val : ''}</td>`;
+      if (val != null) brutIn += val; else brutInComplete = false;
+    }
+    html += `<td class="in-col">${brutInComplete ? brutIn : (brutIn > 0 ? brutIn : '')}</td>`;
+    const brutTotal = (brutOutComplete && brutInComplete) ? brutOut + brutIn : ((brutOut + brutIn) > 0 ? brutOut + brutIn : '');
+    html += `<td class="total-col">${brutTotal}</td></tr>`;
+
+    // Net score row
+    html += `<tr><td class="row-label" style="font-size:10px;color:var(--text-dim)">Net</td>`;
+    let netOut = 0, netOutComplete = true;
+    for (let i = 0; i < 9; i++) {
+      const net = scores[i] != null ? getNetScore(scores[i], player.handicap, course.holes[i].si) : null;
+      if (net != null) netOut += net; else netOutComplete = false;
+      html += `<td style="font-size:10px;color:var(--text-dim)">${net != null ? net : ''}</td>`;
+    }
+    html += `<td class="out-col" style="font-size:10px;color:var(--text-dim)">${netOutComplete ? netOut : (netOut !== 0 ? netOut : '')}</td>`;
+    let netIn = 0, netInComplete = true;
+    for (let i = 9; i < 18; i++) {
+      const net = scores[i] != null ? getNetScore(scores[i], player.handicap, course.holes[i].si) : null;
+      if (net != null) netIn += net; else netInComplete = false;
+      html += `<td style="font-size:10px;color:var(--text-dim)">${net != null ? net : ''}</td>`;
+    }
+    html += `<td class="in-col" style="font-size:10px;color:var(--text-dim)">${netInComplete ? netIn : (netIn !== 0 ? netIn : '')}</td>`;
+    const netTotal = (netOutComplete && netInComplete) ? netOut + netIn : '';
+    html += `<td class="total-col" style="font-size:10px;color:var(--text-dim)">${netTotal}</td></tr>`;
+
+    // Separator between players
+    html += `<tr><td colspan="22" style="padding:0;height:3px;background:var(--border)"></td></tr>`;
+  });
+
+  html += '</tbody></table></div>';
+
+  // Show stableford/format summary below card
+  if (day.format === 'stableford' || day.format === 'chouette') {
+    html += '<div class="card mt-12"><div class="section-title">Stableford</div>';
+    players.forEach(p => {
+      const stab = calcStablefordTotal(dayIndex, p.id);
+      html += `<div style="display:flex;justify-content:space-between;padding:4px 0;font-size:13px">
+        <span>${esc(p.name)}</span><span style="font-weight:700;color:var(--accent)">${stab} pts</span>
+      </div>`;
+    });
+    html += '</div>';
+  }
+
+  html += '</div>';
+  el.innerHTML = html;
+}
+
+// ========== SCORE MODAL ==========
+function openScoreModal(dayIndex, playerId, holeIndex) {
+  // Check permission
+  const signed = isPlayerSigned(dayIndex, playerId);
+  if (signed && !isAdmin()) return;
+  if (!canEditPlayer(playerId)) return;
+
+  const day = T.days[dayIndex];
+  const course = getCourse(day.courseId);
+  if (!course) return;
+
+  scoreModalState = { dayIndex, playerId, holeIndex };
+  const hole = course.holes[holeIndex];
+  const player = getPlayer(playerId);
+  const scores = getPlayerScores(dayIndex, playerId);
+  const currentVal = scores[holeIndex];
+
+  const modal = document.getElementById('score-modal');
+  let html = `<div class="score-modal">
+    <div class="score-modal-title">Trou ${holeIndex + 1}</div>
+    <div class="score-modal-sub">Par ${hole.par} - SI ${hole.si} | ${esc(player.name)}</div>
+    <div class="score-grid">`;
+
+  for (let n = 1; n <= 10; n++) {
+    const isPar = n === hole.par;
+    const isSelected = currentVal === n;
+    html += `<button class="score-num-btn ${isPar ? 'par-btn' : ''} ${isSelected ? 'selected' : ''}" onclick="selectScore(${n})">${n}</button>`;
+  }
+
+  html += '</div>';
+  html += `<div class="score-modal-actions">
+    <button class="btn btn-secondary" onclick="closeScoreModal()">Annuler</button>
+    <button class="btn btn-danger btn-sm" onclick="clearScore()">Effacer</button>
+  </div>`;
+  html += '</div>';
+
+  modal.innerHTML = html;
+  modal.classList.remove('hidden');
+  modal.onclick = function(e) { if (e.target === modal) closeScoreModal(); };
+}
+
+function selectScore(value) {
+  if (!scoreModalState) return;
+  const { dayIndex, playerId, holeIndex } = scoreModalState;
+
+  // Toggle: if already selected, deselect
+  const scores = getPlayerScores(dayIndex, playerId);
+  if (scores[holeIndex] === value) {
+    setPlayerScore(dayIndex, playerId, holeIndex, null);
+  } else {
+    setPlayerScore(dayIndex, playerId, holeIndex, value);
+  }
+
+  saveScoreOnly(dayIndex, playerId);
+  closeScoreModal();
+  render();
+
+  // Check if hole 18 was just entered — prompt signing
+  const newScores = getPlayerScores(dayIndex, playerId);
+  if (holeIndex === 17 && newScores[17] != null && !isPlayerSigned(dayIndex, playerId) && playerId === currentPlayerId) {
+    setTimeout(() => showSignModal(dayIndex, playerId), 300);
+  }
+}
+
+function clearScore() {
+  if (!scoreModalState) return;
+  const { dayIndex, playerId, holeIndex } = scoreModalState;
+  setPlayerScore(dayIndex, playerId, holeIndex, null);
+  saveScoreOnly(dayIndex, playerId);
+  closeScoreModal();
+  render();
+}
+
+function closeScoreModal() {
+  scoreModalState = null;
+  document.getElementById('score-modal').classList.add('hidden');
+}
+
+// ========== CARD SIGNING ==========
+function showSignModal(dayIndex, playerId) {
+  const player = getPlayer(playerId);
+  if (!player) return;
+  const day = T.days[dayIndex];
+  const course = getCourse(day.courseId);
+  if (!course) return;
+  const scores = getPlayerScores(dayIndex, playerId);
+
+  // Calculate totals
+  let brutTotal = 0, netTotal = 0, complete = true;
+  for (let i = 0; i < 18; i++) {
+    if (scores[i] != null) {
+      brutTotal += scores[i];
+      netTotal += getNetScore(scores[i], player.handicap, course.holes[i].si);
+    } else {
+      complete = false;
+    }
+  }
+  const stableford = calcStablefordTotal(dayIndex, playerId);
+
+  const modal = document.getElementById('sign-modal');
+  let html = `<div class="sign-modal">
+    <h3>Voulez-vous signer votre carte ?</h3>
+    <div style="margin-bottom:16px">
+      <div style="font-weight:700;margin-bottom:8px">${esc(player.name)}</div>
+      <div style="font-size:13px;color:var(--text-dim);margin-bottom:4px">${esc(course.name)}</div>`;
+
+  // Mini scorecard summary
+  html += '<div style="display:flex;justify-content:space-between;padding:6px 0;border-top:1px solid var(--border)">';
+  html += `<span>Brut total</span><span style="font-weight:700">${complete ? brutTotal : brutTotal + '*'}</span></div>`;
+  html += '<div style="display:flex;justify-content:space-between;padding:6px 0;border-top:1px solid var(--border)">';
+  html += `<span>Net total</span><span style="font-weight:700">${complete ? netTotal : netTotal + '*'}</span></div>`;
+
+  if (day.format === 'stableford' || day.format === 'chouette') {
+    html += '<div style="display:flex;justify-content:space-between;padding:6px 0;border-top:1px solid var(--border)">';
+    html += `<span>Stableford</span><span style="font-weight:700;color:var(--accent)">${stableford} pts</span></div>`;
+  }
+
+  if (day.format === 'matchplay') {
+    const match = (day.matches || []).find(m => m.player1 === playerId || m.player2 === playerId);
+    if (match) {
+      const result = calcMatchPlayStatus(dayIndex, match);
+      html += '<div style="display:flex;justify-content:space-between;padding:6px 0;border-top:1px solid var(--border)">';
+      html += `<span>Match</span><span style="font-weight:700;color:var(--accent)">${esc(result.status)}</span></div>`;
+    }
+  }
+
+  if (!complete) {
+    html += '<div style="font-size:12px;color:var(--bogey);margin-top:8px">* Certains trous ne sont pas remplis</div>';
+  }
+
+  html += `</div>
+    <div style="display:flex;gap:10px">
+      <button class="btn btn-secondary" style="flex:1" onclick="closeSignModal()">Revenir a la carte</button>
+      <button class="btn btn-primary" style="flex:1" onclick="confirmSign(${dayIndex},'${playerId}')">Signer</button>
+    </div>
+  </div>`;
+
+  modal.innerHTML = html;
+  modal.classList.remove('hidden');
+  modal.onclick = function(e) { if (e.target === modal) closeSignModal(); };
+}
+
+function confirmSign(dayIndex, playerId) {
+  if (!T.signed) T.signed = {};
+  T.signed[`d${dayIndex}_${playerId}`] = true;
+
+  // Check if all players signed — advance day
+  const allPlayers = getAllPlayers();
+  const allSigned = allPlayers.every(p => isPlayerSigned(dayIndex, p.id));
+  if (allSigned && dayIndex === getCurrentDay()) {
+    T.currentDay = (T.currentDay || 0) + 1;
+  }
+
+  saveSigned();
+  closeSignModal();
+  render();
+}
+
+function closeSignModal() {
+  document.getElementById('sign-modal').classList.add('hidden');
+}
+
+// ========== CONFIG TAB ==========
+function renderConfigTab(el) {
+  if (!isAdmin()) {
+    el.innerHTML = '<div class="fade-in card text-center text-dim">Acces reserve a l\'administrateur</div>';
+    return;
+  }
+
+  const url = window.location.origin + window.location.pathname + '#' + (tournamentId || '');
+
+  let html = '<div class="fade-in">';
+  html += '<div class="page-title">Configuration</div>';
+
+  // Share URL
+  html += '<div class="config-section">';
+  html += '<div class="section-title">Partager le tournoi</div>';
+  html += `<div class="share-url">${esc(url)}</div>`;
+  html += `<button class="btn btn-primary btn-sm btn-block" onclick="copyUrl()">Copier le lien</button>`;
+  html += '</div>';
+
+  // Tournament info
+  html += '<div class="config-section">';
+  html += '<div class="section-title">Tournoi</div>';
+  html += `<div class="config-item"><span class="ci-label">Nom</span><span class="ci-value">${esc(T.name)}</span></div>`;
+  html += `<div class="config-item"><span class="ci-label">ID</span><span class="ci-value">${esc(tournamentId)}</span></div>`;
+  html += `<div class="config-item"><span class="ci-label">Jour actuel</span><span class="ci-value">${getCurrentDay() + 1} / ${(T.days || []).length}</span></div>`;
+  html += '</div>';
+
+  // Day management
+  html += '<div class="config-section">';
+  html += '<div class="section-title">Journees</div>';
+  (T.days || []).forEach((day, di) => {
+    const course = getCourse(day.courseId);
+    html += `<div class="config-item">
+      <span class="ci-label">${esc(day.label)} - ${formatLabel(day.format)}</span>
+      <span class="ci-value">${course ? esc(course.name) : ''}</span>
+    </div>`;
+  });
+  html += '</div>';
+
+  // Signed cards management
+  const dayIdx = getCurrentDay();
+  if (T.days && T.days[dayIdx]) {
+    html += '<div class="config-section">';
+    html += '<div class="section-title">Cartes signees (Jour actuel)</div>';
+    getAllPlayers().forEach(p => {
+      const signed = isPlayerSigned(dayIdx, p.id);
+      html += `<div class="config-item">
+        <span class="ci-label">${esc(p.name)}</span>
+        <span>${signed ? '<span style="color:var(--birdie)">Signe &#10003;</span>' : '<span style="color:var(--text-dim)">Non signe</span>'}</span>
+        ${signed ? `<button class="btn btn-danger btn-sm" style="margin-left:8px" onclick="unlockCard(${dayIdx},'${p.id}')">Debloquer</button>` : ''}
+      </div>`;
+    });
+    html += '</div>';
+  }
+
+  // Advanced: force day change
+  html += '<div class="config-section">';
+  html += '<div class="section-title">Actions avancees</div>';
+  if (getCurrentDay() > 0) {
+    html += `<button class="btn btn-secondary btn-block mb-8" onclick="forceDay(${getCurrentDay() - 1})">Revenir au jour precedent</button>`;
+  }
+  if (T.days && getCurrentDay() < T.days.length - 1) {
+    html += `<button class="btn btn-secondary btn-block mb-8" onclick="forceDay(${getCurrentDay() + 1})">Passer au jour suivant</button>`;
+  }
+  html += `<button class="btn btn-secondary btn-block mb-8" onclick="showWelcomeScreen()">Changer de joueur</button>`;
+  html += `<button class="btn btn-danger btn-block" onclick="deleteTournament()">Supprimer le tournoi</button>`;
+  html += '</div>';
+
+  html += '</div>';
+  el.innerHTML = html;
+}
+
+function copyUrl() {
+  const url = window.location.origin + window.location.pathname + '#' + (tournamentId || '');
+  navigator.clipboard.writeText(url).then(() => {
+    alert('Lien copie !');
+  }).catch(() => {
+    prompt('Copiez ce lien:', url);
+  });
+}
+
+function forceDay(dayIndex) {
+  if (!isAdmin()) return;
+  T.currentDay = dayIndex;
+  saveSigned();
+  render();
+}
+
+function deleteTournament() {
+  if (!confirm('Etes-vous sur de vouloir supprimer ce tournoi ? Cette action est irreversible.')) return;
+  if (tournamentId && db) {
+    db.ref('tournaments/' + tournamentId).remove();
+  }
+  T = null;
+  tournamentId = null;
+  localStorage.removeItem('golf-currentPlayerId');
+  window.location.hash = '';
   showWizard();
 }
 
-// Listen for hash changes (someone pastes a new tournament link)
-window.addEventListener('hashchange',()=>{
-  const newId=window.location.hash.slice(1);
-  if(newId && newId!==tournamentId && newId.length>=4){
-    tournamentId=newId;
-    localStorage.setItem('golf-tournament-id',newId);
-    if(db){
-      db.ref('tournaments/'+newId).once('value').then((snapshot)=>{
-        const data=snapshot.val();
-        if(data){
-          initApp({
-            name:data.meta?.name||'Tournoi',
-            teams:data.teams||[],
-            courses:data.courses||[],
-            days:data.days||[],
-            scores:data.scores||{}
-          });
-        }
-      });
-    }
+// ========== INIT ==========
+window.addEventListener('DOMContentLoaded', init);
+window.addEventListener('hashchange', () => {
+  const newId = getTournamentId();
+  if (newId && newId !== tournamentId) {
+    tournamentId = newId;
+    init();
   }
 });
 </script>
